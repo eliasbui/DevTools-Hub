@@ -10,7 +10,6 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Bot, 
   Send, 
   X, 
   Copy, 
@@ -27,6 +26,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { toolsKnowledgeBase } from '@/lib/toolsKnowledge';
+import robotIcon from '@assets/robot-3d-icon-download-in-png-blend-fbx-gltf-file-formats--ai-technology-machine-activity-pack-science-icons-7746765-1735354399_1752830016519.png';
 
 interface Message {
   id: string;
@@ -158,30 +158,93 @@ export function AIAssistant() {
             exit={{ scale: 0, opacity: 0 }}
             className="fixed bottom-6 right-6 z-50"
           >
-            <Button
-              size="lg"
-              className="rounded-full w-16 h-16 shadow-2xl bg-primary hover:bg-primary/90 relative overflow-hidden group"
+            <motion.button
+              className="relative w-20 h-20 rounded-full shadow-2xl overflow-hidden group cursor-pointer ai-button-glow"
               onClick={() => setIsOpen(true)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              {/* Glowing background effect */}
               <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400"
+                animate={{
+                  rotate: [0, 360],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
+              
+              {/* Inner circle backdrop */}
+              <div className="absolute inset-1 bg-gradient-to-br from-gray-900 to-gray-800 rounded-full" />
+              
+              {/* 3D Robot Icon */}
+              <motion.div
+                className="relative z-10 w-full h-full p-2 flex items-center justify-center"
                 animate={{ 
-                  rotateY: [0, 360],
-                  scale: [1, 1.1, 1]
+                  y: [0, -5, 0],
+                  rotateY: [0, 10, -10, 0]
                 }}
                 transition={{ 
                   duration: 4,
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="relative z-10"
               >
-                <Bot className="w-8 h-8" />
+                <motion.img 
+                  src={robotIcon} 
+                  alt="AI Assistant"
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                  animate={{
+                    filter: [
+                      "brightness(1) saturate(1)",
+                      "brightness(1.2) saturate(1.2)",
+                      "brightness(1) saturate(1)"
+                    ]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
               </motion.div>
-              <Badge className="absolute -top-1 -right-1 px-2 py-0.5 text-xs">
+              
+              {/* Pulse effect */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-2 border-blue-400"
+                animate={{
+                  scale: [1, 1.3],
+                  opacity: [0.5, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeOut"
+                }}
+              />
+              
+              {/* Second pulse for depth */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-2 border-cyan-400"
+                animate={{
+                  scale: [1, 1.5],
+                  opacity: [0.3, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                  delay: 0.5
+                }}
+              />
+              
+              <Badge className="absolute -top-1 -right-1 px-2 py-0.5 text-xs bg-gradient-to-r from-blue-600 to-cyan-600 border-0 animate-pulse">
                 AI
               </Badge>
-            </Button>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -199,12 +262,6 @@ export function AIAssistant() {
             <Card className="h-full flex flex-col">
               <CardHeader className="flex flex-row items-center justify-between p-4">
                 <div className="flex items-center gap-2">
-                  <motion.div
-                    animate={{ rotateY: [0, 360] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Bot className="w-6 h-6 text-primary" />
-                  </motion.div>
                   <CardTitle className="text-lg">AI Assistant</CardTitle>
                   {isPro && <Badge variant="secondary">Pro</Badge>}
                 </div>
