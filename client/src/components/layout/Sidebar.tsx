@@ -192,9 +192,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         {/* Search */}
-        <div className="p-4 border-b border-border flex-shrink-0 pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
+        <div className="p-4 border-b border-border flex-shrink-0">
           <motion.div 
-            className="relative pl-[6px] pr-[6px]"
+            className="relative"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -204,7 +204,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               placeholder="Search tools..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 smooth-transition mt-[-12px] mb-[-12px]"
+              className="pl-10 smooth-transition"
             />
           </motion.div>
         </div>

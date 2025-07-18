@@ -12,6 +12,10 @@ import { Favorites } from "@/pages/Favorites";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Marketing from "@/pages/Marketing";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 import { useAuth } from "@/hooks/useAuth";
 import { AIAssistant } from "@/components/AIAssistant";
 
@@ -21,6 +25,10 @@ function Router() {
   return (
     <Switch>
       <Route path="/marketing" component={Marketing} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={Landing} />
       ) : (

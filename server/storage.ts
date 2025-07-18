@@ -22,10 +22,14 @@ import { eq, desc, and } from "drizzle-orm";
 export interface IStorage {
   // User management
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByResetToken(token: string): Promise<User | undefined>;
+  createUser(user: Partial<User>): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
-  updateUser(id: string, data: { firstName?: string; lastName?: string }): Promise<User>;
+  updateUser(id: string, data: Partial<User>): Promise<User>;
   deleteUser(id: string): Promise<void>;
   updateUserPlan(userId: string, plan: string, subscriptionEnd?: Date): Promise<User>;
+  updateStripeInfo(userId: string, customerId: string, subscriptionId?: string): Promise<User>;
   incrementDailyUsage(userId: string): Promise<{ allowed: boolean; count: number }>;
   resetDailyUsage(userId: string): Promise<void>;
   
@@ -57,6 +61,21 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.resetPasswordToken, token));
+    return user || undefined;
+  }
+
+  async createUser(userData: Partial<User>): Promise<User> {
+    const [user] = await db.insert(users).values(userData).returning();
+    return user;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
@@ -72,7 +91,7 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUser(id: string, data: { firstName?: string; lastName?: string }): Promise<User> {
+  async updateUser(id: string, data: Partial<User>): Promise<User> {
     const [user] = await db
       .update(users)
       .set({
@@ -99,6 +118,19 @@ export class DatabaseStorage implements IStorage {
         plan,
         subscriptionEnd,
         subscriptionStatus: subscriptionEnd ? 'active' : 'expired',
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async updateStripeInfo(userId: string, customerId: string, subscriptionId?: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        stripeCustomerId: customerId,
+        stripeSubscriptionId: subscriptionId,
         updatedAt: new Date()
       })
       .where(eq(users.id, userId))

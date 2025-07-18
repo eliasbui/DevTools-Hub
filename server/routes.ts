@@ -6,17 +6,22 @@ import {
   insertSavedDataSchema, 
   insertApiHistorySchema 
 } from "@shared/schema";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated as replitAuth } from "./replitAuth";
+import { setupMultiAuth, isAuthenticated } from "./auth";
 import userRoutes from "./routes/userRoutes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Auth middleware - use multi-auth instead of just Replit auth
+  await setupMultiAuth(app);
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // Handle both Replit auth and multi-auth
+      const userId = req.user.id || req.user.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ message: "User ID not found" });
+      }
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {

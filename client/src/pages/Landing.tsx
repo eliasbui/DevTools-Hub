@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircle, Code, Zap, Shield, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 
 export default function Landing() {
   return (
@@ -34,15 +35,25 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
+            className="flex gap-4 justify-center"
           >
-            <a href="/api/login">
+            <Link href="/signup">
               <Button 
                 size="lg" 
                 className="bg-blue-600 hover:bg-blue-700 text-white animate-pulse-hover"
               >
                 Get Started Free
               </Button>
-            </a>
+            </Link>
+            <Link href="/login">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="animate-pulse-hover"
+              >
+                Sign In
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
 
@@ -137,9 +148,9 @@ export default function Landing() {
                   <span className="text-sm">Smart paste detection</span>
                 </div>
               </div>
-              <a href="/api/login">
+              <Link href="/signup">
                 <Button className="w-full animate-pulse-hover">Get Started</Button>
-              </a>
+              </Link>
             </Card>
           </motion.div>
 
@@ -183,11 +194,11 @@ export default function Landing() {
                   <span className="text-sm">Priority support</span>
                 </div>
               </div>
-              <a href="/api/login">
+              <Link href="/signup">
                 <Button className="w-full bg-blue-600 hover:bg-blue-700 animate-pulse-hover">
                   Get Started
                 </Button>
-              </a>
+              </Link>
             </Card>
           </motion.div>
 
@@ -222,9 +233,9 @@ export default function Landing() {
                   <span className="text-sm">Admin controls</span>
                 </div>
               </div>
-              <a href="/api/login">
+              <Link href="/signup">
                 <Button className="w-full animate-pulse-hover">Get Started</Button>
-              </a>
+              </Link>
             </Card>
           </motion.div>
 

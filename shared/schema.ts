@@ -18,14 +18,20 @@ export const sessions = pgTable(
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().notNull(), // Replit sub (user ID)
   email: varchar("email").unique(),
+  password: varchar("password"), // For local auth
+  provider: varchar("provider").default('replit'), // replit, google, local
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   plan: varchar("plan").default('free'), // free, pro, team, enterprise
   subscriptionStatus: varchar("subscription_status").default('active'), // active, cancelled, expired
   subscriptionEnd: timestamp("subscription_end"),
+  stripeCustomerId: varchar("stripe_customer_id"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"),
   dailyUsageCount: integer("daily_usage_count").default(0),
   lastUsageReset: timestamp("last_usage_reset").defaultNow(),
+  resetPasswordToken: varchar("reset_password_token"),
+  resetPasswordExpires: timestamp("reset_password_expires"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
