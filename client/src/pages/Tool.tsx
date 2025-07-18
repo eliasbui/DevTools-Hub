@@ -41,6 +41,9 @@ import { SSLCertificateAnalyzer } from '@/components/tools/SSLCertificateAnalyze
 import { EncryptionTools } from '@/components/tools/EncryptionTools';
 import { HMACGenerator } from '@/components/tools/HMACGenerator';
 import { CertificateDecoder } from '@/components/tools/CertificateDecoder';
+import { FileChecksumCalculator } from '@/components/tools/FileChecksumCalculator';
+import { FileSumCalculator } from '@/components/tools/FileSumCalculator';
+import { SecureZipViewer } from '@/components/tools/SecureZipViewer';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -249,6 +252,21 @@ const tools = {
     name: 'Certificate Decoder',
     description: 'Parse and decode X.509 certificates',
     component: CertificateDecoder,
+  },
+  'file-checksum-calculator': {
+    name: 'File Checksum Calculator',
+    description: 'Calculate MD5, SHA-256, SHA-512, and other hashes',
+    component: FileChecksumCalculator,
+  },
+  'file-sum-calculator': {
+    name: 'File Sum Calculator',
+    description: 'Analyze file statistics and metadata',
+    component: FileSumCalculator,
+  },
+  'secure-zip-viewer': {
+    name: 'Secure ZIP Viewer',
+    description: 'Browse archives safely with security checks',
+    component: SecureZipViewer,
   },
 };
 

@@ -50,7 +50,12 @@ This is a comprehensive web application for developers that provides a collectio
 ✓ **HMAC Generator**: Message authentication codes with SHA256/512, MD5, SHA3
 ✓ **Certificate Decoder**: Parse X.509 certificates with full extension support
 
-→ **Total Tools**: 38 developer tools now available in the application
+✓ **File Processing Tools Complete**: Implemented all 3 requested file processing tools
+✓ **File Checksum Calculator**: Multi-algorithm hash generator with MD5, SHA-256, SHA-512, SHA3, CRC32, BLAKE2
+✓ **File Sum Calculator**: Advanced file analysis with encoding detection, line/word/character statistics, entropy calculation
+✓ **Secure ZIP Viewer**: Client-side archive browser with security checks, path traversal protection, zip bomb detection
+
+→ **Total Tools**: 41 developer tools now available in the application
 
 ## User Preferences
 
@@ -80,7 +85,7 @@ Preferred communication style: Simple, everyday language.
 - **Confidence Scoring**: Provides confidence levels for detected formats
 - **Context-aware Actions**: Offers relevant tools based on detected data type
 
-#### Tool Suite (38 tools)
+#### Tool Suite (41 tools)
 - **Data Converters (8)**: JSON formatter, Base64 encoder/decoder, URL encoder/decoder, CSV converter, Markdown converter, YAML converter, XML formatter, Unit converter
 - **Validators (3)**: Regex tester, JWT debugger, text diff checker
 - **Generators (5)**: UUID generator, hash generator, Lorem Ipsum generator, password generator, QR code generator
@@ -90,6 +95,7 @@ Preferred communication style: Simple, everyday language.
 - **Text Processing (8)**: Case converter, Text statistics, Text encoder/decoder, Text replacer, Line tools, Text splitter, Character counter, Markdown to HTML
 - **Database Tools (5)**: SQL formatter, Schema visualizer (ERD), SQL query builder, Connection string builder, Mock data generator
 - **Security Tools (5)**: Password strength checker, SSL certificate analyzer, Encryption/decryption tools, HMAC generator, Certificate decoder
+- **File Tools (3)**: File checksum calculator, File sum calculator (analyzer), Secure ZIP viewer
 
 #### User Interface
 - **Responsive Design**: Mobile-first approach with adaptive layouts

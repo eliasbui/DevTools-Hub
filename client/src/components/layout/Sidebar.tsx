@@ -37,7 +37,8 @@ import {
   Scissors,
   Table,
   Lock,
-  FileKey
+  FileKey,
+  Archive
 } from 'lucide-react';
 
 const tools = [
@@ -82,6 +83,9 @@ const tools = [
   { id: 'encryption-tools', name: 'Encryption', icon: Lock, category: 'security' }, 
   { id: 'hmac-generator', name: 'HMAC Generator', icon: Key, category: 'security' },
   { id: 'certificate-decoder', name: 'Certificate Decoder', icon: FileKey, category: 'security' },
+  { id: 'file-checksum-calculator', name: 'File Checksum', icon: Hash, category: 'file' },
+  { id: 'file-sum-calculator', name: 'File Analyzer', icon: BarChart, category: 'file' },
+  { id: 'secure-zip-viewer', name: 'ZIP Viewer', icon: Archive, category: 'file' },
 ];
 
 const categories = {
@@ -93,7 +97,8 @@ const categories = {
   design: 'CSS & Design',
   text: 'Text Processing',
   database: 'Database Tools',
-  security: 'Security & Encryption'
+  security: 'Security & Encryption',
+  file: 'File Tools'
 };
 
 interface SidebarProps {
