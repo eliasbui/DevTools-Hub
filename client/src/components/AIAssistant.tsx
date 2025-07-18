@@ -195,7 +195,6 @@ export function AIAssistant() {
               ref={robotRef}
               className="relative w-20 h-20 rounded-full shadow-2xl overflow-hidden group cursor-pointer ai-button-glow"
               onClick={() => setIsOpen(true)}
-              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               {/* Glowing background effect */}

@@ -106,7 +106,6 @@ export function SmartPaste() {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <motion.div
-              whileHover={{ rotate: 360 }}
               transition={{ duration: 0.5 }}
             >
               <Wand2 className="w-5 h-5 text-purple-500 dark:text-purple-400" />

@@ -190,7 +190,7 @@ Visit our website at https://example.com`);
                 variant="outline"
                 size="sm"
                 onClick={addReplacement}
-                className="animate-pulse-hover"
+                className=""
               >
                 Add Rule
               </Button>

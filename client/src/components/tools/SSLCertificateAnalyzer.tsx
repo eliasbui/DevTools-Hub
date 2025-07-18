@@ -193,7 +193,6 @@ AQUAA4ICDwAwggIKAoICAQC7W3p4D8kgDkJa7Y3p6QZoJ8p0
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <motion.div
-              whileHover={{ rotate: 360 }}
               transition={{ duration: 0.5 }}
             >
               <Shield className="w-5 h-5" />

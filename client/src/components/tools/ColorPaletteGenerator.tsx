@@ -431,14 +431,14 @@ export function ColorPaletteGenerator() {
                           <div className="text-xs text-muted-foreground">Color Name</div>
                         </div>
                         <div 
-                          className="cursor-pointer hover:bg-background rounded p-1 transition-colors"
+                          className="cursor-pointer rounded p-1 transition-colors"
                           onClick={() => copyColor(color, 'hex')}
                         >
                           <div className="text-sm font-mono">{color.hex}</div>
                           <div className="text-xs text-muted-foreground">HEX</div>
                         </div>
                         <div 
-                          className="cursor-pointer hover:bg-background rounded p-1 transition-colors"
+                          className="cursor-pointer rounded p-1 transition-colors"
                           onClick={() => copyColor(color, 'rgb')}
                         >
                           <div className="text-sm font-mono">
@@ -447,7 +447,7 @@ export function ColorPaletteGenerator() {
                           <div className="text-xs text-muted-foreground">RGB</div>
                         </div>
                         <div 
-                          className="cursor-pointer hover:bg-background rounded p-1 transition-colors"
+                          className="cursor-pointer rounded p-1 transition-colors"
                           onClick={() => copyColor(color, 'hsl')}
                         >
                           <div className="text-sm font-mono">

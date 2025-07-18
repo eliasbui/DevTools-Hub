@@ -90,14 +90,14 @@ export function Home() {
                   <div className="flex items-center gap-2">
                     {user.plan === 'free' && (
                       <Link href="/pricing">
-                        <Button variant="outline" size="sm" className="animate-pulse-hover">
+                        <Button variant="outline" size="sm">
                           <Sparkles className="w-4 h-4 mr-2" />
                           Upgrade
                         </Button>
                       </Link>
                     )}
                     <a href="/api/logout">
-                      <Button variant="ghost" size="sm" className="animate-pulse-hover">
+                      <Button variant="ghost" size="sm">
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </Button>
@@ -126,14 +126,12 @@ export function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
                 className="cursor-pointer"
               >
-                <Card className="smooth-transition hover:shadow-lg">
+                <Card className="smooth-transition">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <motion.div
-                        whileHover={{ rotate: 360 }}
                         transition={{ duration: 0.5 }}
                       >
                         <Icon className={`w-5 h-5 ${tool.color}`} />
@@ -145,7 +143,7 @@ export function Home() {
                     <p className="text-sm text-muted-foreground mb-4">{tool.description}</p>
                     <div className="space-y-2">
                       <Link href={`/tool/${tool.id}`}>
-                        <Button className="w-full animate-pulse-hover">
+                        <Button className="w-full">
                           Open Tool
                         </Button>
                       </Link>

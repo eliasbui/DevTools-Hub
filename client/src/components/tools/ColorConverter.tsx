@@ -503,8 +503,8 @@ export function ColorConverter() {
                         onClick={() => copyValue(adjustedHex, 'HEX')}
                         title={`Lightness ${adjustment > 0 ? '+' : ''}${adjustment}%`}
                       />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all duration-200 flex items-center justify-center">
-                        <Copy className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 rounded-lg transition-all duration-200 flex items-center justify-center">
+                        <Copy className="w-4 h-4 text-white opacity-0 transition-opacity" />
                       </div>
                     </motion.div>
                   );
