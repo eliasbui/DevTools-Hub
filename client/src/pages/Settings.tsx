@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -184,21 +185,16 @@ export function Settings() {
     : 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="container max-w-4xl mx-auto p-6"
+    <Layout
+      title="Settings"
+      description="Manage your account settings and preferences"
     >
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <SettingsIcon className="w-8 h-8" />
-          Settings
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your account settings and preferences
-        </p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-6"
+      >
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-5 mb-6">
@@ -528,6 +524,7 @@ export function Settings() {
           </Card>
         </TabsContent>
       </Tabs>
-    </motion.div>
+      </motion.div>
+    </Layout>
   );
 }
