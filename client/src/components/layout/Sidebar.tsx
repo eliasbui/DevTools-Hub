@@ -1,8 +1,10 @@
+
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Wand2, 
   Code, 
@@ -83,34 +85,49 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   return (
     <>
       {/* Mobile backdrop */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setIsOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
-      <div className={`
-        fixed left-0 top-0 h-full w-60 bg-background border-r border-border shadow-lg z-50 
-        transform transition-transform duration-300 ease-in-out flex flex-col
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0
-      `}>
+      <motion.div 
+        className={`
+          fixed left-0 top-0 h-full w-60 bg-background border-r border-border shadow-lg z-50 
+          flex flex-col
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0
+        `}
+        initial={{ x: -240 }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
         {/* Header */}
         <div className="p-4 border-b border-border flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <motion.div 
+                className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center"
+                whileHover={{ scale: 1.1, rotate: 180 }}
+                transition={{ duration: 0.3 }}
+              >
                 <Wand2 className="w-4 h-4 text-primary-foreground" />
-              </div>
+              </motion.div>
               <span className="text-lg font-semibold text-foreground">DevTools Hub</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(false)}
-              className="lg:hidden"
+              className="lg:hidden animate-pulse-hover"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -119,53 +136,77 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
         {/* Search */}
         <div className="p-4 border-b border-border flex-shrink-0">
-          <div className="relative">
+          <motion.div 
+            className="relative"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
             <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search tools..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
+              className="pl-10 smooth-transition focus:scale-105"
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* Navigation */}
         <ScrollArea className="flex-1 min-h-0">
           <nav className="space-y-6 p-4">
-            {Object.entries(categories).map(([key, label]) => {
+            {Object.entries(categories).map(([key, label], categoryIndex) => {
               const categoryTools = groupedTools[key] || [];
               if (categoryTools.length === 0) return null;
 
               return (
-                <div key={key}>
+                <motion.div 
+                  key={key}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + categoryIndex * 0.1 }}
+                >
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                     {label}
                   </h3>
                   <div className="space-y-1">
-                    {categoryTools.map((tool) => {
+                    {categoryTools.map((tool, toolIndex) => {
                       const Icon = tool.icon;
                       const isActive = location === `/tool/${tool.id}` || (location === '/' && tool.id === 'smart-paste');
                       
                       return (
-                        <Link key={tool.id} href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
-                          <Button
-                            variant={isActive ? 'default' : 'ghost'}
-                            className={`w-full justify-start ${
-                              isActive 
-                                ? 'bg-primary text-primary-foreground' 
-                                : 'text-foreground hover:bg-accent'
-                            }`}
-                            onClick={() => setIsOpen(false)}
-                          >
-                            <Icon className="w-4 h-4 mr-2" />
-                            {tool.name}
-                          </Button>
-                        </Link>
+                        <motion.div
+                          key={tool.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.3 + categoryIndex * 0.1 + toolIndex * 0.05 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Link href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
+                            <Button
+                              variant={isActive ? 'default' : 'ghost'}
+                              className={`w-full justify-start smooth-transition ${
+                                isActive 
+                                  ? 'bg-primary text-primary-foreground' 
+                                  : 'text-foreground hover:bg-accent'
+                              }`}
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <motion.div
+                                whileHover={{ rotate: 360 }}
+                                transition={{ duration: 0.5 }}
+                              >
+                                <Icon className="w-4 h-4 mr-2" />
+                              </motion.div>
+                              {tool.name}
+                            </Button>
+                          </Link>
+                        </motion.div>
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </nav>
@@ -173,12 +214,23 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
         {/* Settings */}
         <div className="p-4 border-t border-border flex-shrink-0">
-          <Button variant="ghost" className="w-full justify-start text-foreground">
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+          >
+            <Button variant="ghost" className="w-full justify-start text-foreground animate-pulse-hover">
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Settings className="w-4 h-4 mr-2" />
+              </motion.div>
+              Settings
+            </Button>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

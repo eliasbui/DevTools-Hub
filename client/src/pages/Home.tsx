@@ -6,6 +6,7 @@ import { Link } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
 import { 
   Code, 
   Key, 
@@ -40,88 +41,127 @@ export function Home() {
       <div className="space-y-6">
         {/* User Profile Section */}
         {user && (
-          <Card className="border-primary/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={user.profileImageUrl || undefined} />
-                    <AvatarFallback>
-                      {user.firstName?.[0]}{user.lastName?.[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">
-                        {user.firstName} {user.lastName}
-                      </h3>
-                      <Badge variant={user.plan === 'free' ? 'secondary' : 'default'}>
-                        {user.plan === 'free' ? <span>Free</span> : <><Sparkles className="w-3 h-3 mr-1" /> {user.plan}</>}
-                      </Badge>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Card className="border-primary/20 smooth-transition hover:shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={user.profileImageUrl || undefined} />
+                        <AvatarFallback>
+                          {user.firstName?.[0]}{user.lastName?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    </motion.div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold">
+                          {user.firstName} {user.lastName}
+                        </h3>
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <Badge variant={user.plan === 'free' ? 'secondary' : 'default'}>
+                            {user.plan === 'free' ? <span>Free</span> : <><Sparkles className="w-3 h-3 mr-1" /> {user.plan}</>}
+                          </Badge>
+                        </motion.div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      {user.plan === 'free' && (
+                        <motion.p 
+                          className="text-xs text-muted-foreground mt-1"
+                          animate={{ opacity: [0.5, 1, 0.5] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          {100 - (user.dailyUsageCount || 0)} operations remaining today
+                        </motion.p>
+                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
                     {user.plan === 'free' && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {100 - (user.dailyUsageCount || 0)} operations remaining today
-                      </p>
+                      <Link href="/pricing">
+                        <Button variant="outline" size="sm" className="animate-pulse-hover">
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Upgrade
+                        </Button>
+                      </Link>
                     )}
+                    <a href="/api/logout">
+                      <Button variant="ghost" size="sm" className="animate-pulse-hover">
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </Button>
+                    </a>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {user.plan === 'free' && (
-                    <Link href="/pricing">
-                      <Button variant="outline" size="sm">
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Upgrade
-                      </Button>
-                    </Link>
-                  )}
-                  <a href="/api/logout">
-                    <Button variant="ghost" size="sm">
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
         {/* Smart Paste Component */}
         <SmartPaste />
 
         {/* Quick Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {quickTools.map((tool) => {
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          {quickTools.map((tool, index) => {
             const Icon = tool.icon;
             return (
-              <Card key={tool.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Icon className="w-5 h-5 text-primary" />
-                    <span>{tool.name}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">{tool.description}</p>
-                  <div className="space-y-2">
-                    <Link href={`/tool/${tool.id}`}>
-                      <Button className="w-full">
-                        Open Tool
-                      </Button>
-                    </Link>
-                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                      <CheckCircle className="w-3 h-3 text-green-500" />
-                      <span>Fast & Accurate</span>
-                      <CheckCircle className="w-3 h-3 text-green-500" />
-                      <span>Client-side</span>
+              <motion.div
+                key={tool.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                className="cursor-pointer"
+              >
+                <Card className="smooth-transition hover:shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <motion.div
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <Icon className="w-5 h-5 text-primary" />
+                      </motion.div>
+                      <span>{tool.name}</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">{tool.description}</p>
+                    <div className="space-y-2">
+                      <Link href={`/tool/${tool.id}`}>
+                        <Button className="w-full animate-pulse-hover">
+                          Open Tool
+                        </Button>
+                      </Link>
+                      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                        <CheckCircle className="w-3 h-3 text-green-500" />
+                        <span>Fast & Accurate</span>
+                        <CheckCircle className="w-3 h-3 text-green-500" />
+                        <span>Client-side</span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Feature Showcase */}
         <Card>
