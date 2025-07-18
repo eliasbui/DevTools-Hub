@@ -11,6 +11,7 @@ import { Settings } from "@/pages/Settings";
 import { Favorites } from "@/pages/Favorites";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
+import Marketing from "@/pages/Marketing";
 import { useAuth } from "@/hooks/useAuth";
 import { AIAssistant } from "@/components/AIAssistant";
 
@@ -19,6 +20,7 @@ function Router() {
 
   return (
     <Switch>
+      <Route path="/marketing" component={Marketing} />
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={Landing} />
       ) : (
