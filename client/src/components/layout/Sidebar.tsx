@@ -157,7 +157,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           />
         )}
       </AnimatePresence>
-
       {/* Sidebar */}
       <motion.div 
         className={`
@@ -171,7 +170,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         {/* Header */}
-        <div className="p-4 border-b border-border flex-shrink-0">
+        <div className="p-4 border-b border-border flex-shrink-0 mt-[16px] mb-[16px]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <motion.div 
