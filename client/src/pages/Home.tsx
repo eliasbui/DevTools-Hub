@@ -170,17 +170,17 @@ export function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium">JWT Token</label>
-                <div className="p-3 border rounded-lg bg-muted/50 font-mono text-xs">
+                <div className="p-2 md:p-3 border rounded-lg bg-muted/50 font-mono text-[10px] md:text-xs break-all">
                   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
                 </div>
               </div>
               
               <div className="space-y-2">
                 <label className="text-sm font-medium">Decoded Payload</label>
-                <div className="p-3 border rounded-lg bg-muted/50 font-mono text-xs">
+                <div className="p-2 md:p-3 border rounded-lg bg-muted/50 font-mono text-[10px] md:text-xs">
                   <pre className="text-foreground">{JSON.stringify({
                     sub: "1234567890",
                     name: "John Doe",

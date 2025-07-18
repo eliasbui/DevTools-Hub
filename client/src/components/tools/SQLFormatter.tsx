@@ -206,11 +206,11 @@ values ('John Doe', 'john@example.com', 'hashed_password_here', now(), 'active')
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Settings */}
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Dialect:</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label className="text-sm font-medium whitespace-nowrap">Dialect:</label>
               <Select value={dialect} onValueChange={setDialect}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-full sm:w-32">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -222,10 +222,10 @@ values ('John Doe', 'john@example.com', 'hashed_password_here', now(), 'active')
               </Select>
             </div>
             
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Indent:</label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label className="text-sm font-medium whitespace-nowrap">Indent:</label>
               <Select value={indentSize} onValueChange={setIndentSize}>
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="w-full sm:w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -236,10 +236,10 @@ values ('John Doe', 'john@example.com', 'hashed_password_here', now(), 'active')
               </Select>
             </div>
             
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Keywords:</label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label className="text-sm font-medium whitespace-nowrap">Keywords:</label>
               <Select value={uppercase} onValueChange={setUppercase}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-full sm:w-32">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -267,14 +267,14 @@ values ('John Doe', 'john@example.com', 'hashed_password_here', now(), 'active')
           </div>
 
           {/* Input/Output Areas */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Input SQL</label>
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Enter your SQL query here..."
-                className="min-h-[400px] font-mono text-sm smooth-transition focus:scale-105"
+                className="min-h-[250px] md:min-h-[400px] font-mono text-xs md:text-sm smooth-transition focus:scale-[1.02]"
               />
             </div>
 
@@ -297,7 +297,7 @@ values ('John Doe', 'john@example.com', 'hashed_password_here', now(), 'active')
                 value={output}
                 readOnly
                 placeholder="Formatted SQL will appear here..."
-                className="min-h-[400px] font-mono text-sm bg-muted"
+                className="min-h-[250px] md:min-h-[400px] font-mono text-xs md:text-sm bg-muted"
               />
             </div>
           </div>

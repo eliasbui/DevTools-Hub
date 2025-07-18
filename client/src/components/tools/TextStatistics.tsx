@@ -205,7 +205,7 @@ export function TextStatistics() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Type or paste your text here to analyze..."
-              className="min-h-[200px] smooth-transition focus:scale-105"
+              className="min-h-[150px] md:min-h-[200px] text-xs md:text-sm smooth-transition focus:scale-[1.02]"
             />
           </div>
 

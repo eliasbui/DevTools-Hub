@@ -235,9 +235,9 @@ settings:
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Format Selection */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
             <Select value={inputFormat} onValueChange={setInputFormat}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -251,13 +251,13 @@ settings:
               variant="outline"
               size="sm"
               onClick={handleSwapFormats}
-              className="animate-pulse-hover"
+              className="animate-pulse-hover w-full sm:w-auto"
             >
               ⇄ Swap
             </Button>
             
             <Select value={outputFormat} onValueChange={setOutputFormat}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -269,7 +269,7 @@ settings:
           </div>
 
           {/* Input/Output Areas */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Input ({inputFormat.toUpperCase()})</label>
@@ -277,7 +277,7 @@ settings:
                   variant="ghost"
                   size="sm"
                   onClick={() => setInput(sampleData[inputFormat as keyof typeof sampleData])}
-                  className="animate-pulse-hover"
+                  className="animate-pulse-hover text-xs"
                 >
                   Load Sample
                 </Button>
@@ -286,7 +286,7 @@ settings:
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={`Enter ${inputFormat.toUpperCase()} data...`}
-                className="min-h-[400px] font-mono text-sm smooth-transition focus:scale-105"
+                className="min-h-[250px] md:min-h-[400px] font-mono text-xs md:text-sm smooth-transition focus:scale-[1.02]"
               />
             </div>
 
@@ -309,7 +309,7 @@ settings:
                 value={output}
                 readOnly
                 placeholder="Converted output will appear here..."
-                className="min-h-[400px] font-mono text-sm bg-muted"
+                className="min-h-[250px] md:min-h-[400px] font-mono text-xs md:text-sm bg-muted"
               />
             </div>
           </div>

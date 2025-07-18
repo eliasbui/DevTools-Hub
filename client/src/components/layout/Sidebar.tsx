@@ -148,7 +148,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -164,7 +164,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           fixed left-0 top-0 h-full w-60 bg-background border-r border-border shadow-lg z-50 
           flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0
+          md:translate-x-0
         `}
         initial={{ x: -240 }}
         animate={{ x: 0 }}

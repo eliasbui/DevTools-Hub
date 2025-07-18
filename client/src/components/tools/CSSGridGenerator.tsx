@@ -212,7 +212,7 @@ ${gridItems.map(item =>
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Edit Selected Item</h3>
               {gridItems.filter(item => item.id === selectedItem).map(item => (
-                <div key={item.id} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div key={item.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Name</label>
                     <Input
@@ -229,11 +229,11 @@ ${gridItems.map(item =>
                       value={item.gridArea}
                       onChange={(e) => updateGridArea(item.id, e.target.value)}
                       placeholder="e.g. 1 / 1 / 2 / 3"
-                      className="font-mono text-sm"
+                      className="font-mono text-xs md:text-sm"
                     />
                   </div>
                   
-                  <div className="md:col-span-2 flex justify-end">
+                  <div className="col-span-1 sm:col-span-2 flex justify-end">
                     <Button
                       onClick={() => removeGridItem(item.id)}
                       variant="destructive"

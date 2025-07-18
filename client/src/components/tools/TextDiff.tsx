@@ -26,14 +26,14 @@ export function TextDiff() {
       <CardContent>
         <div className="space-y-6">
           {/* Input Sections */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium">Original Text</label>
               <Textarea
                 value={text1}
                 onChange={(e) => setText1(e.target.value)}
                 placeholder="Enter original text..."
-                className="min-h-[200px] font-mono text-sm"
+                className="min-h-[150px] md:min-h-[200px] font-mono text-xs md:text-sm"
               />
             </div>
             <div className="space-y-2">
@@ -42,15 +42,17 @@ export function TextDiff() {
                 value={text2}
                 onChange={(e) => setText2(e.target.value)}
                 placeholder="Enter modified text..."
-                className="min-h-[200px] font-mono text-sm"
+                className="min-h-[150px] md:min-h-[200px] font-mono text-xs md:text-sm"
               />
             </div>
           </div>
 
           {/* Compare Button */}
-          <Button onClick={handleCompare} className="w-full">
-            Compare Texts
-          </Button>
+          <div className="flex justify-center">
+            <Button onClick={handleCompare} size="sm">
+              Compare Texts
+            </Button>
+          </div>
 
           {/* Diff Results */}
           {diff.length > 0 && (

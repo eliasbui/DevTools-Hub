@@ -76,7 +76,7 @@ export function JSONFormatter() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {/* Input Section */}
           <div className="space-y-4">
             <label className="text-sm font-medium">JSON Input</label>
@@ -84,9 +84,9 @@ export function JSONFormatter() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Paste your JSON here..."
-              className="min-h-[400px] font-mono text-sm"
+              className="min-h-[250px] md:min-h-[400px] font-mono text-xs md:text-sm"
             />
-            <div className="flex space-x-2">
+            <div className="flex gap-2 justify-center md:justify-start">
               <Button onClick={handleFormat} size="sm">
                 Format
               </Button>
@@ -121,13 +121,13 @@ export function JSONFormatter() {
               <label className="text-sm font-medium">Formatted Output</label>
               {output && <CopyButton text={output} />}
             </div>
-            <div className="min-h-[400px] p-4 border rounded-lg bg-muted/50 overflow-auto">
+            <div className="min-h-[250px] md:min-h-[400px] p-3 md:p-4 border rounded-lg bg-muted/50 overflow-auto">
               {output ? (
-                <pre className="font-mono text-sm whitespace-pre-wrap text-foreground">
+                <pre className="font-mono text-xs md:text-sm whitespace-pre-wrap text-foreground">
                   {output}
                 </pre>
               ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="flex items-center justify-center h-full text-xs md:text-sm text-muted-foreground text-center p-4">
                   Click Format or Minify to see output
                 </div>
               )}

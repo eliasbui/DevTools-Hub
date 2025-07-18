@@ -117,7 +117,7 @@ export function SmartPaste() {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Input Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -135,8 +135,8 @@ export function SmartPaste() {
                         onClick={handleClear}
                         className="text-destructive hover:text-destructive animate-pulse-hover"
                       >
-                        <Trash2 className="w-4 h-4" />
-                        Clear
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        <span className="hidden sm:inline">Clear</span>
                       </Button>
                     </motion.div>
                   )}
@@ -146,7 +146,7 @@ export function SmartPaste() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Paste any content here - JSON, Base64, JWT, URL, timestamp, hex color, etc..."
-                className="min-h-[300px] font-mono text-sm smooth-transition focus:scale-105"
+                className="min-h-[200px] md:min-h-[300px] font-mono text-xs md:text-sm smooth-transition focus:scale-[1.02]"
               />
               <AnimatePresence>
                 {detected && (
@@ -178,7 +178,7 @@ export function SmartPaste() {
                   )}
                 </AnimatePresence>
               </div>
-              <div className="min-h-[300px] p-4 border rounded-lg bg-muted/50 overflow-auto">
+              <div className="min-h-[200px] md:min-h-[300px] p-3 md:p-4 border rounded-lg bg-muted/50 overflow-auto">
                 <AnimatePresence mode="wait">
                   {output ? (
                     <motion.pre
@@ -186,7 +186,7 @@ export function SmartPaste() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="font-mono text-sm whitespace-pre-wrap text-foreground"
+                      className="font-mono text-xs md:text-sm whitespace-pre-wrap text-foreground"
                     >
                       {output}
                     </motion.pre>
@@ -195,7 +195,7 @@ export function SmartPaste() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex items-center justify-center h-full text-muted-foreground"
+                      className="flex items-center justify-center h-full text-xs md:text-sm text-muted-foreground text-center p-4"
                     >
                       Paste content to see formatted output
                     </motion.div>

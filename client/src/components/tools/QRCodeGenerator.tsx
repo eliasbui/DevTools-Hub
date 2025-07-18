@@ -289,8 +289,8 @@ export function QRCodeGenerator() {
           {/* Customization */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Customization</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2 col-span-1 sm:col-span-2 md:col-span-1">
                 <label className="text-sm font-medium">Size: {size[0]}px</label>
                 <Slider
                   value={size}
@@ -318,34 +318,34 @@ export function QRCodeGenerator() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Foreground Color</label>
-                <div className="flex space-x-2">
+                <div className="flex gap-2">
                   <Input
                     type="color"
                     value={foregroundColor}
                     onChange={(e) => setForegroundColor(e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-12 h-9 p-1"
                   />
                   <Input
                     value={foregroundColor}
                     onChange={(e) => setForegroundColor(e.target.value)}
-                    className="flex-1 font-mono"
+                    className="flex-1 font-mono text-xs"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Background Color</label>
-                <div className="flex space-x-2">
+                <div className="flex gap-2">
                   <Input
                     type="color"
                     value={backgroundColor}
                     onChange={(e) => setBackgroundColor(e.target.value)}
-                    className="w-16 h-10 p-1"
+                    className="w-12 h-9 p-1"
                   />
                   <Input
                     value={backgroundColor}
                     onChange={(e) => setBackgroundColor(e.target.value)}
-                    className="flex-1 font-mono"
+                    className="flex-1 font-mono text-xs"
                   />
                 </div>
               </div>
