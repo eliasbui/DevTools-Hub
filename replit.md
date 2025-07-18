@@ -38,7 +38,13 @@ This is a comprehensive web application for developers that provides a collectio
 ✓ **Character Counter**: Detailed character analysis with breakdown and frequency
 ✓ **Markdown to HTML**: Live conversion with preview and HTML output
 
-→ **Total Tools**: 30 developer tools now available in the application
+✓ **Database Tools Complete**: Implemented all 5 missing database tools
+✓ **Database Schema Visualizer**: Generate ERD from SQL CREATE statements
+✓ **SQL Query Builder**: Visual SQL query construction with live preview
+✓ **Connection String Builder**: Generate connection strings for PostgreSQL, MySQL, MongoDB, etc.
+✓ **Mock Data Generator**: Generate realistic test data in JSON, CSV, or SQL format
+
+→ **Total Tools**: 34 developer tools now available in the application
 
 ## User Preferences
 
@@ -68,7 +74,7 @@ Preferred communication style: Simple, everyday language.
 - **Confidence Scoring**: Provides confidence levels for detected formats
 - **Context-aware Actions**: Offers relevant tools based on detected data type
 
-#### Tool Suite (30 tools)
+#### Tool Suite (34 tools)
 - **Data Converters (8)**: JSON formatter, Base64 encoder/decoder, URL encoder/decoder, CSV converter, Markdown converter, YAML converter, XML formatter, Unit converter
 - **Validators (3)**: Regex tester, JWT debugger, text diff checker
 - **Generators (5)**: UUID generator, hash generator, Lorem Ipsum generator, password generator, QR code generator
@@ -76,7 +82,7 @@ Preferred communication style: Simple, everyday language.
 - **API & Network (1)**: HTTP client with request history, cURL generation
 - **CSS & Design (3)**: Grid generator, color palette generator, box shadow generator
 - **Text Processing (8)**: Case converter, Text statistics, Text encoder/decoder, Text replacer, Line tools, Text splitter, Character counter, Markdown to HTML
-- **Database Tools (1)**: SQL formatter with syntax highlighting
+- **Database Tools (5)**: SQL formatter, Schema visualizer (ERD), SQL query builder, Connection string builder, Mock data generator
 - **Security Tools (1)**: Password strength checker with entropy analysis
 
 #### User Interface

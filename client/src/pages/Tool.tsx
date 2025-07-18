@@ -33,6 +33,10 @@ import { LineTools } from '@/components/tools/LineTools';
 import { TextSplitter } from '@/components/tools/TextSplitter';
 import { CharacterCounter } from '@/components/tools/CharacterCounter';
 import { MarkdownToHtml } from '@/components/tools/MarkdownToHtml';
+import { DatabaseSchemaVisualizer } from '@/components/tools/DatabaseSchemaVisualizer';
+import { SQLQueryBuilder } from '@/components/tools/SQLQueryBuilder';
+import { ConnectionStringBuilder } from '@/components/tools/ConnectionStringBuilder';
+import { MockDataGenerator } from '@/components/tools/MockDataGenerator';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -201,6 +205,26 @@ const tools = {
     name: 'Markdown to HTML',
     description: 'Convert Markdown to HTML with live preview',
     component: MarkdownToHtml,
+  },
+  'database-schema-visualizer': {
+    name: 'Database Schema Visualizer',
+    description: 'Generate ERD from SQL CREATE statements',
+    component: DatabaseSchemaVisualizer,
+  },
+  'sql-query-builder': {
+    name: 'SQL Query Builder',
+    description: 'Visual SQL query construction with preview',
+    component: SQLQueryBuilder,
+  },
+  'connection-string-builder': {
+    name: 'Connection String Builder',
+    description: 'Generate database connection strings for various databases',
+    component: ConnectionStringBuilder,
+  },
+  'mock-data-generator': {
+    name: 'Mock Data Generator',
+    description: 'Generate realistic test data in JSON, CSV, or SQL format',
+    component: MockDataGenerator,
   },
 };
 

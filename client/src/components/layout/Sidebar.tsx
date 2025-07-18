@@ -34,7 +34,8 @@ import {
   FileCode2,
   Replace,
   List,
-  Scissors
+  Scissors,
+  Table
 } from 'lucide-react';
 
 const tools = [
@@ -71,6 +72,10 @@ const tools = [
   { id: 'text-splitter', name: 'Text Splitter', icon: Scissors, category: 'text' },
   { id: 'character-counter', name: 'Character Counter', icon: Calculator, category: 'text' },
   { id: 'markdown-to-html', name: 'Markdown to HTML', icon: FileText, category: 'text' },
+  { id: 'database-schema-visualizer', name: 'Schema Visualizer', icon: Database, category: 'database' },
+  { id: 'sql-query-builder', name: 'Query Builder', icon: Table, category: 'database' },
+  { id: 'connection-string-builder', name: 'Connection String', icon: LinkIcon, category: 'database' },
+  { id: 'mock-data-generator', name: 'Mock Data', icon: Database, category: 'database' },
 ];
 
 const categories = {
