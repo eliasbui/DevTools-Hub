@@ -56,8 +56,11 @@ This is a comprehensive web application for developers that provides a collectio
 ✓ **Secure ZIP Viewer**: Client-side archive browser with security checks, path traversal protection, zip bomb detection
 
 ✓ **Image Converter**: Advanced format conversion with WebP/AVIF support, batch processing, client-side optimization
+✓ **Code Minifier**: Minify and beautify JavaScript, CSS, HTML, JSON with compression statistics
+✓ **SVG Optimizer**: Optimize SVG files with customizable options, remove metadata, clean paths
+✓ **Cron Expression Builder**: Visual cron builder with next run preview and common patterns
 
-→ **Total Tools**: 42 developer tools now available in the application
+→ **Total Tools**: 45 developer tools now available in the application
 
 ## User Preferences
 
@@ -87,17 +90,17 @@ Preferred communication style: Simple, everyday language.
 - **Confidence Scoring**: Provides confidence levels for detected formats
 - **Context-aware Actions**: Offers relevant tools based on detected data type
 
-#### Tool Suite (41 tools)
-- **Data Converters (8)**: JSON formatter, Base64 encoder/decoder, URL encoder/decoder, CSV converter, Markdown converter, YAML converter, XML formatter, Unit converter
+#### Tool Suite (45 tools)
+- **Data Converters (9)**: JSON formatter, Base64 encoder/decoder, URL encoder/decoder, CSV converter, Markdown converter, YAML converter, XML formatter, Unit converter, Code minifier
 - **Validators (3)**: Regex tester, JWT debugger, text diff checker
-- **Generators (5)**: UUID generator, hash generator, Lorem Ipsum generator, password generator, QR code generator
+- **Generators (6)**: UUID generator, hash generator, Lorem Ipsum generator, password generator, QR code generator, Cron expression builder
 - **Timestamp Tools (1)**: Unix timestamp conversion with timezone support
 - **API & Network (1)**: HTTP client with request history, cURL generation
 - **CSS & Design (3)**: Grid generator, color palette generator, box shadow generator
 - **Text Processing (8)**: Case converter, Text statistics, Text encoder/decoder, Text replacer, Line tools, Text splitter, Character counter, Markdown to HTML
 - **Database Tools (5)**: SQL formatter, Schema visualizer (ERD), SQL query builder, Connection string builder, Mock data generator
 - **Security Tools (5)**: Password strength checker, SSL certificate analyzer, Encryption/decryption tools, HMAC generator, Certificate decoder
-- **File Tools (4)**: File checksum calculator, File sum calculator (analyzer), Secure ZIP viewer, Image converter
+- **File Tools (5)**: File checksum calculator, File sum calculator (analyzer), Secure ZIP viewer, Image converter, SVG optimizer
 
 #### User Interface
 - **Responsive Design**: Mobile-first approach with adaptive layouts

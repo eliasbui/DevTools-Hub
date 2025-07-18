@@ -45,6 +45,9 @@ import { FileChecksumCalculator } from '@/components/tools/FileChecksumCalculato
 import { FileSumCalculator } from '@/components/tools/FileSumCalculator';
 import { SecureZipViewer } from '@/components/tools/SecureZipViewer';
 import { ImageConverter } from '@/components/tools/ImageConverter';
+import { CodeMinifier } from '@/components/tools/CodeMinifier';
+import { SVGOptimizer } from '@/components/tools/SVGOptimizer';
+import { CronExpressionBuilder } from '@/components/tools/CronExpressionBuilder';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -273,6 +276,21 @@ const tools = {
     name: 'Image Converter',
     description: 'Convert images between formats with optimization',
     component: ImageConverter,
+  },
+  'code-minifier': {
+    name: 'Code Minifier',
+    description: 'Minify and beautify JavaScript, CSS, HTML, JSON',
+    component: CodeMinifier,
+  },
+  'svg-optimizer': {
+    name: 'SVG Optimizer',
+    description: 'Optimize SVG files for web with customizable options',
+    component: SVGOptimizer,
+  },
+  'cron-expression-builder': {
+    name: 'Cron Expression Builder',
+    description: 'Build and test cron expressions visually',
+    component: CronExpressionBuilder,
   },
 };
 

@@ -88,6 +88,9 @@ const tools = [
   { id: 'file-sum-calculator', name: 'File Analyzer', icon: BarChart, category: 'file' },
   { id: 'secure-zip-viewer', name: 'ZIP Viewer', icon: Archive, category: 'file' },
   { id: 'image-converter', name: 'Image Converter', icon: FileImage, category: 'file' },
+  { id: 'code-minifier', name: 'Code Minifier', icon: FileCode, category: 'converters' },
+  { id: 'svg-optimizer', name: 'SVG Optimizer', icon: FileImage, category: 'file' },
+  { id: 'cron-expression-builder', name: 'Cron Builder', icon: Clock, category: 'generators' },
 ];
 
 const categories = {
