@@ -63,7 +63,9 @@ export function AIAssistant() {
   const [provider, setProvider] = useState('included');
   const [apiKey, setApiKey] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [eyePosition, setEyePosition] = useState({ x: 0, y: 0 });
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const robotRef = useRef<HTMLDivElement>(null);
 
   // Check user plan
   const isPro = user?.plan !== 'free';
@@ -71,6 +73,37 @@ export function AIAssistant() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Mouse tracking for robot eyes
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!robotRef.current) return;
+      
+      const rect = robotRef.current.getBoundingClientRect();
+      const robotCenterX = rect.left + rect.width / 2;
+      const robotCenterY = rect.top + rect.height / 2;
+      
+      // Calculate distance from mouse to robot center
+      const deltaX = e.clientX - robotCenterX;
+      const deltaY = e.clientY - robotCenterY;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      
+      // Only track if mouse is within 200px radius
+      if (distance < 200) {
+        // Calculate eye position (limit movement to small radius)
+        const maxOffset = 8;
+        const offsetX = (deltaX / distance) * Math.min(distance / 10, maxOffset);
+        const offsetY = (deltaY / distance) * Math.min(distance / 10, maxOffset);
+        
+        setEyePosition({ x: offsetX, y: offsetY });
+      } else {
+        setEyePosition({ x: 0, y: 0 });
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -159,6 +192,7 @@ export function AIAssistant() {
             className="fixed bottom-6 right-6 z-50"
           >
             <motion.button
+              ref={robotRef}
               className="relative w-20 h-20 rounded-full shadow-2xl overflow-hidden group cursor-pointer ai-button-glow"
               onClick={() => setIsOpen(true)}
               whileHover={{ scale: 1.1 }}
@@ -193,23 +227,65 @@ export function AIAssistant() {
                   ease: "easeInOut"
                 }}
               >
-                <motion.img 
-                  src={robotIcon} 
-                  alt="AI Assistant"
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                  animate={{
-                    filter: [
-                      "brightness(1) saturate(1)",
-                      "brightness(1.2) saturate(1.2)",
-                      "brightness(1) saturate(1)"
-                    ]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
+                <div className="relative w-full h-full">
+                  <motion.img 
+                    src={robotIcon} 
+                    alt="AI Assistant"
+                    className="w-full h-full object-contain drop-shadow-2xl"
+                    animate={{
+                      filter: [
+                        "brightness(1) saturate(1)",
+                        "brightness(1.2) saturate(1.2)",
+                        "brightness(1) saturate(1)"
+                      ]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  
+                  {/* Robot Eyes Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative">
+                      {/* Left Eye */}
+                      <motion.div
+                        className="absolute w-2 h-2 bg-cyan-400 rounded-full shadow-lg"
+                        style={{
+                          left: '-6px',
+                          top: '-2px',
+                          transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)`,
+                          boxShadow: '0 0 10px #00ffff, 0 0 20px #00ffff'
+                        }}
+                        animate={{
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                        }}
+                      />
+                      {/* Right Eye */}
+                      <motion.div
+                        className="absolute w-2 h-2 bg-cyan-400 rounded-full shadow-lg"
+                        style={{
+                          right: '-6px',
+                          top: '-2px',
+                          transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)`,
+                          boxShadow: '0 0 10px #00ffff, 0 0 20px #00ffff'
+                        }}
+                        animate={{
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </motion.div>
               
               {/* Pulse effect */}

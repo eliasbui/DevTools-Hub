@@ -71,6 +71,8 @@ This is a comprehensive web application for developers that provides a collectio
 ✓ **Multi-Provider AI Support**: Integrated OpenAI, Claude, Gemini, and Azure OpenAI (Pro plan feature)
 ✓ **Interactive Features**: Tool-specific help, copy responses, settings panel for API configuration
 ✓ **Freemium Integration**: Free tier uses included AI, Pro users can use custom providers with their API keys
+✓ **Robot Eye Tracking**: Implemented mouse-following eyes effect on AI assistant icon that tracks cursor within 200px radius
+✓ **Sidebar Contrast Fix**: Fixed text visibility issue in dark theme by ensuring proper hover state colors
 
 ## User Preferences
 

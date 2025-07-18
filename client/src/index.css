@@ -394,6 +394,27 @@
   to { transform: rotate(360deg); }
 }
 
+/* AI button glow effect */
+.ai-button-glow {
+  position: relative;
+}
+
+.ai-button-glow::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  background: linear-gradient(45deg, #00ffff, #0080ff, #8000ff, #ff00ff);
+  border-radius: 50%;
+  opacity: 0.6;
+  filter: blur(12px);
+  animation: rotate-glow 3s linear infinite;
+}
+
+@keyframes rotate-glow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

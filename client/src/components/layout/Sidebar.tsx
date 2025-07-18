@@ -250,8 +250,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                   variant={isActive ? 'default' : 'ghost'}
                                   className={`w-full justify-start smooth-transition card-hover ${
                                     isActive 
-                                      ? 'gradient-primary text-white shadow-lg' 
-                                      : 'text-foreground hover:bg-accent/50'
+                                      ? 'gradient-primary text-white shadow-lg hover:text-white' 
+                                      : 'text-foreground hover:bg-accent/50 hover:text-foreground'
                                   }`}
                                   onClick={() => setIsOpen(false)}
                                 >
