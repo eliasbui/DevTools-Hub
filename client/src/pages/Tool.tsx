@@ -307,6 +307,10 @@ export function Tool() {
   const tool = tools[toolId as keyof typeof tools];
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
+  
+  // Check if coming from recent activity (has loadData param)
+  const searchParams = new URLSearchParams(window.location.search);
+  const loadFromHistory = searchParams.get('loadData') === 'true';
 
   // Track tool usage
   const trackUsage = useMutation({
@@ -374,7 +378,7 @@ export function Tool() {
         <div className="absolute top-4 right-4 z-10">
           <FavoriteButton toolId={toolId} showLabel />
         </div>
-        <ToolComponent />
+        <ToolComponent toolId={toolId} toolName={tool.name} />
       </div>
     </Layout>
   );

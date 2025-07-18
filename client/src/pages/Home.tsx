@@ -167,7 +167,7 @@ export function Home() {
                     animate={{ opacity: 1, x: 0 }}
                     className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                   >
-                    <Link href={`/tool/${activity.toolId}`}>
+                    <Link href={`/tool/${activity.toolId}?loadData=true`}>
                       <div className="flex items-center gap-3 cursor-pointer">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                           <Code className="w-4 h-4 text-primary" />

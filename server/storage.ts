@@ -248,6 +248,16 @@ export class DatabaseStorage implements IStorage {
     
     return await query.orderBy(desc(savedData.createdAt));
   }
+  
+  async getLatestSavedData(userId: string, toolId: string): Promise<SavedData | undefined> {
+    const [data] = await db
+      .select()
+      .from(savedData)
+      .where(and(eq(savedData.userId, userId), eq(savedData.toolId, toolId)))
+      .orderBy(desc(savedData.createdAt))
+      .limit(1);
+    return data || undefined;
+  }
 
   async getUserSavedData(userId: string): Promise<SavedData[]> {
     return this.getSavedData(userId);

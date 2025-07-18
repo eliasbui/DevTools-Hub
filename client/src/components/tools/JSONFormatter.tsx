@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/common/CopyButton';
 import { formatJSON, minifyJSON, validateJSON } from '@/utils/formatters';
 import { useToast } from '@/hooks/use-toast';
-import { Code, CheckCircle, AlertCircle } from 'lucide-react';
+import { Code, CheckCircle, AlertCircle, History, Save } from 'lucide-react';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { useToolData } from '@/hooks/useToolData';
 
 export function JSONFormatter() {
   const [input, setInput] = useState('');
@@ -13,6 +15,32 @@ export function JSONFormatter() {
   const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState('');
   const { toast } = useToast();
+  
+  // Check if we should load data from history
+  const searchParams = new URLSearchParams(window.location.search);
+  const loadFromHistory = searchParams.get('loadData') === 'true';
+  
+  // Load saved data if coming from recent activity
+  const { savedData, isLoading } = useToolData('json-formatter', loadFromHistory);
+  
+  // Auto-save hook
+  const { triggerSave, isSaving } = useAutoSave({
+    toolId: 'json-formatter',
+    toolName: 'JSON Formatter',
+    getData: () => ({ input, output }),
+  });
+  
+  // Load saved data when available
+  useEffect(() => {
+    if (savedData && loadFromHistory) {
+      setInput(savedData.input || '');
+      setOutput(savedData.output || '');
+      toast({
+        title: "Data Loaded",
+        description: "Previous data has been loaded",
+      });
+    }
+  }, [savedData, loadFromHistory]);
 
   const handleFormat = () => {
     try {
@@ -20,6 +48,7 @@ export function JSONFormatter() {
       setOutput(formatted);
       setIsValid(true);
       setError('');
+      triggerSave(); // Auto-save after formatting
     } catch (e) {
       setError((e as Error).message);
       setIsValid(false);
@@ -37,6 +66,7 @@ export function JSONFormatter() {
       setOutput(minified);
       setIsValid(true);
       setError('');
+      triggerSave(); // Auto-save after minifying
     } catch (e) {
       setError((e as Error).message);
       setIsValid(false);
@@ -70,9 +100,17 @@ export function JSONFormatter() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Code className="w-5 h-5 text-primary" />
-          <span>JSON Formatter</span>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Code className="w-5 h-5 text-primary" />
+            <span>JSON Formatter</span>
+          </div>
+          {isSaving && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Save className="w-4 h-4 animate-pulse" />
+              <span>Saving...</span>
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>

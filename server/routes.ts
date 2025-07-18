@@ -79,7 +79,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Saved data management
   app.post("/api/saved-data", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id || req.user.claims?.sub;
       const data = insertSavedDataSchema.parse({ ...req.body, userId });
       const result = await storage.saveData(data);
       res.json(result);
@@ -90,7 +90,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/saved-data", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id || req.user.claims?.sub;
       const toolId = req.query.toolId as string;
       const data = await storage.getSavedData(userId, toolId);
       res.json(data);
@@ -98,11 +98,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch saved data" });
     }
   });
+  
+  // Get latest saved data for a tool
+  app.get("/api/saved-data/latest/:toolId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id || req.user.claims?.sub;
+      const toolId = req.params.toolId;
+      const data = await storage.getLatestSavedData(userId, toolId);
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch latest saved data" });
+    }
+  });
 
   app.delete("/api/saved-data/:id", isAuthenticated, async (req: any, res) => {
     try {
       const id = parseInt(req.params.id);
-      const userId = req.user.claims.sub;
+      const userId = req.user.id || req.user.claims?.sub;
       const success = await storage.deleteSavedData(id, userId);
       res.json({ success });
     } catch (error) {
