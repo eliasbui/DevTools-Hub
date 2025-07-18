@@ -33,7 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Check usage limits middleware
   const checkUsageLimits = async (req: any, res: any, next: any) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = req.user?.id || req.user?.claims?.sub;
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
@@ -57,7 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Tool usage tracking
   app.post("/api/tool-usage", isAuthenticated, checkUsageLimits, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id || req.user.claims?.sub;
       const usage = insertToolUsageSchema.parse({ ...req.body, userId });
       const result = await storage.recordToolUsage(usage);
       res.json(result);
@@ -68,7 +68,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/tool-usage", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id || req.user.claims?.sub;
       const usage = await storage.getUserToolUsage(userId);
       res.json(usage);
     } catch (error) {

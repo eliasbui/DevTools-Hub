@@ -7,6 +7,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { formatDistanceToNow } from 'date-fns';
 import { 
   Code, 
   Key, 
@@ -32,6 +34,12 @@ const quickTools = [
 
 export function Home() {
   const { user } = useAuth();
+  
+  // Fetch recent tool usage
+  const { data: recentActivity } = useQuery({
+    queryKey: ['/api/tool-usage'],
+    enabled: !!user,
+  });
 
   return (
     <Layout 
@@ -144,11 +152,46 @@ export function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <History className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>No recent activity</p>
-              <p className="text-sm">Your recent tool usage will appear here</p>
-            </div>
+            {!recentActivity || recentActivity.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <History className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p>No recent activity</p>
+                <p className="text-sm">Your recent tool usage will appear here</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentActivity.slice(0, 5).map((activity: any) => (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  >
+                    <Link href={`/tool/${activity.toolId}`}>
+                      <div className="flex items-center gap-3 cursor-pointer">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Code className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">{activity.toolName}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Used {activity.usageCount} time{activity.usageCount > 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                    <div className="text-xs text-muted-foreground">
+                      {formatDistanceToNow(new Date(activity.lastUsed), { addSuffix: true })}
+                    </div>
+                  </motion.div>
+                ))}
+                {recentActivity.length > 5 && (
+                  <p className="text-xs text-center text-muted-foreground mt-2">
+                    And {recentActivity.length - 5} more...
+                  </p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
