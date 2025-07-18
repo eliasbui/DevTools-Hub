@@ -91,12 +91,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       {/* Sidebar */}
       <div className={`
         fixed left-0 top-0 h-full w-60 bg-background border-r border-border shadow-lg z-50 
-        transform transition-transform duration-300 ease-in-out
+        transform transition-transform duration-300 ease-in-out flex flex-col
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0
       `}>
         {/* Header */}
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -116,7 +116,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         {/* Search */}
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border flex-shrink-0">
           <div className="relative">
             <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
             <Input
@@ -129,8 +129,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <ScrollArea className="flex-1 p-4">
-          <nav className="space-y-6">
+        <ScrollArea className="flex-1 min-h-0">
+          <nav className="space-y-6 p-4">
             {Object.entries(categories).map(([key, label]) => {
               const categoryTools = groupedTools[key] || [];
               if (categoryTools.length === 0) return null;
@@ -170,7 +170,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </ScrollArea>
 
         {/* Settings */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border flex-shrink-0">
           <Button variant="ghost" className="w-full justify-start text-foreground">
             <Settings className="w-4 h-4 mr-2" />
             Settings
