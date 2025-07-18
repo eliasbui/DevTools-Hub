@@ -204,7 +204,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               placeholder="Search tools..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 smooth-transition"
+              className="pl-10 smooth-transition mt-[-12px] mb-[-12px]"
             />
           </motion.div>
         </div>
