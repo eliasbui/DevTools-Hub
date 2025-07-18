@@ -55,7 +55,7 @@ export function LoremGenerator() {
                 className="w-20"
               />
             </div>
-            <Button onClick={handleGenerate}>
+            <Button onClick={handleGenerate} size="sm">
               Generate
             </Button>
           </div>

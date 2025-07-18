@@ -84,11 +84,11 @@ export function HashGenerator() {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleGenerate} disabled={isGenerating || !input.trim()}>
-              Generate {algorithm}
+            <Button onClick={handleGenerate} disabled={isGenerating || !input.trim()} size="sm">
+              {algorithm}
             </Button>
-            <Button onClick={handleGenerateAll} variant="outline" disabled={isGenerating || !input.trim()}>
-              Generate All
+            <Button onClick={handleGenerateAll} variant="outline" disabled={isGenerating || !input.trim()} size="sm">
+              All Hashes
             </Button>
           </div>
 

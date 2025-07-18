@@ -331,13 +331,17 @@ settings:
           </AnimatePresence>
 
           {/* Convert Button */}
-          <Button 
-            onClick={convertData} 
-            className="w-full animate-pulse-hover"
-            disabled={!input.trim() || inputFormat === outputFormat}
-          >
-            Convert {inputFormat.toUpperCase()} to {outputFormat.toUpperCase()}
-          </Button>
+          <div className="flex justify-center">
+            <Button 
+              onClick={convertData} 
+              className="animate-pulse-hover"
+              size="sm"
+              disabled={!input.trim() || inputFormat === outputFormat}
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Convert
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </motion.div>

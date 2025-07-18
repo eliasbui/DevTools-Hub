@@ -319,18 +319,20 @@ values ('John Doe', 'john@example.com', 'hashed_password_here', now(), 'active')
           </AnimatePresence>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 justify-center">
             <Button 
               onClick={formatSQL} 
-              className="flex-1 animate-pulse-hover"
+              className="animate-pulse-hover"
+              size="sm"
               disabled={!input.trim()}
             >
-              Format SQL
+              Format
             </Button>
             <Button 
               onClick={minifySQL}
               variant="outline"
               className="animate-pulse-hover"
+              size="sm"
               disabled={!input.trim()}
             >
               Minify

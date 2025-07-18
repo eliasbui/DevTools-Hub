@@ -280,9 +280,9 @@ export function QRCodeGenerator() {
               </TabsContent>
             </Tabs>
 
-            <Button onClick={generateQRData}>
+            <Button onClick={generateQRData} size="sm">
               <RefreshCw className="w-4 h-4 mr-2" />
-              Generate QR Data
+              Generate
             </Button>
           </div>
 

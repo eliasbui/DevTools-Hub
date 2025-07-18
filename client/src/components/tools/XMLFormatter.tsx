@@ -338,18 +338,20 @@ export function XMLFormatter() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 justify-center">
             <Button 
               onClick={formatXML} 
-              className="flex-1 animate-pulse-hover"
+              className="animate-pulse-hover"
+              size="sm"
               disabled={!input.trim()}
             >
-              Format XML
+              Format
             </Button>
             <Button 
               onClick={minifyXML}
               variant="outline"
               className="animate-pulse-hover"
+              size="sm"
               disabled={!input.trim()}
             >
               Minify
@@ -358,9 +360,10 @@ export function XMLFormatter() {
               onClick={validateXML}
               variant="outline"
               className="animate-pulse-hover"
+              size="sm"
               disabled={!input.trim()}
             >
-              Validate Only
+              Validate
             </Button>
           </div>
         </CardContent>

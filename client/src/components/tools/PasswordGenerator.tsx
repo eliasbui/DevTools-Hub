@@ -257,14 +257,14 @@ export function PasswordGenerator() {
 
           {/* Generation Buttons */}
           <div className="flex flex-wrap gap-2">
-            <Button onClick={generatePassword}>
+            <Button onClick={generatePassword} size="sm">
               <RefreshCw className="w-4 h-4 mr-2" />
-              Generate Random
+              Generate
             </Button>
-            <Button onClick={generatePronounceablePassword} variant="outline">
+            <Button onClick={generatePronounceablePassword} variant="outline" size="sm">
               Pronounceable
             </Button>
-            <Button onClick={generatePassphrase} variant="outline">
+            <Button onClick={generatePassphrase} variant="outline" size="sm">
               Passphrase
             </Button>
           </div>
