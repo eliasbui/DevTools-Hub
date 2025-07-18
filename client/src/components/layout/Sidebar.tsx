@@ -176,8 +176,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <div className="flex items-center space-x-2">
               <motion.div 
                 className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center"
-                whileHover={{ scale: 1.1, rotate: 180 }}
-                transition={{ duration: 0.3 }}
               >
                 <Wand2 className="w-4 h-4 text-primary-foreground" />
               </motion.div>
@@ -187,7 +185,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(false)}
-              className="lg:hidden animate-pulse-hover"
+              className="lg:hidden"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -207,7 +205,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               placeholder="Search tools..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 smooth-transition focus:scale-105"
+              className="pl-10 smooth-transition"
             />
           </motion.div>
         </div>
@@ -240,7 +238,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.3 + categoryIndex * 0.1 + toolIndex * 0.05 }}
-                          whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
                           <Tooltip>
@@ -248,16 +245,14 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                               <Link href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
                                 <Button
                                   variant={isActive ? 'default' : 'ghost'}
-                                  className={`w-full justify-start smooth-transition card-hover ${
+                                  className={`w-full justify-start smooth-transition ${
                                     isActive 
-                                      ? 'gradient-primary text-white shadow-lg hover:text-white' 
-                                      : 'text-foreground hover:bg-accent/50 hover:text-foreground'
+                                      ? 'gradient-primary text-white shadow-lg' 
+                                      : 'text-foreground'
                                   }`}
                                   onClick={() => setIsOpen(false)}
                                 >
                                   <motion.div
-                                    whileHover={{ rotate: 360 }}
-                                    transition={{ duration: 0.5 }}
                                     className="flex items-center justify-center"
                                   >
                                     <Icon className={`w-4 h-4 mr-2 icon-bounce ${
@@ -293,15 +288,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <Link href="/favorites">
               <Button 
                 variant={location === '/favorites' ? 'default' : 'ghost'} 
-                className="w-full justify-start text-foreground animate-pulse-hover"
+                className="w-full justify-start text-foreground"
                 onClick={() => setIsOpen(false)}
               >
-                <motion.div
-                  whileHover={{ scale: 1.2 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Star className="w-4 h-4 mr-2" />
-                </motion.div>
+                <Star className="w-4 h-4 mr-2" />
                 Favorites
               </Button>
             </Link>
@@ -314,15 +304,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <Link href="/settings">
               <Button 
                 variant={location === '/settings' ? 'default' : 'ghost'} 
-                className="w-full justify-start text-foreground animate-pulse-hover"
+                className="w-full justify-start text-foreground"
                 onClick={() => setIsOpen(false)}
               >
-                <motion.div
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                </motion.div>
+                <Settings className="w-4 h-4 mr-2" />
                 Settings
               </Button>
             </Link>

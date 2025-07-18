@@ -73,6 +73,7 @@ This is a comprehensive web application for developers that provides a collectio
 ✓ **Freemium Integration**: Free tier uses included AI, Pro users can use custom providers with their API keys
 ✓ **Robot Eye Tracking**: Implemented mouse-following eyes effect on AI assistant icon that tracks cursor within 200px radius
 ✓ **Sidebar Contrast Fix**: Fixed text visibility issue in dark theme by ensuring proper hover state colors
+✓ **Removed Sidebar Hover Effects**: Removed all hover animations and effects from sidebar navigation as per user preference
 
 ## User Preferences
 
