@@ -21,6 +21,9 @@ import { QRCodeGenerator } from '@/components/tools/QRCodeGenerator';
 import { CSVConverter } from '@/components/tools/CSVConverter';
 import { MarkdownConverter } from '@/components/tools/MarkdownConverter';
 import { DataVisualization } from '@/components/tools/DataVisualization';
+import { YAMLConverter } from '@/components/tools/YAMLConverter';
+import { SQLFormatter } from '@/components/tools/SQLFormatter';
+import { XMLFormatter } from '@/components/tools/XMLFormatter';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -129,6 +132,21 @@ const tools = {
     name: 'Data Visualization',
     description: 'Visualize JSON, XML, YAML, and CSV data as interactive graphs',
     component: DataVisualization,
+  },
+  'yaml-converter': {
+    name: 'YAML Converter',
+    description: 'Convert between YAML, JSON, and XML formats',
+    component: YAMLConverter,
+  },
+  'sql-formatter': {
+    name: 'SQL Formatter',
+    description: 'Format and beautify SQL queries',
+    component: SQLFormatter,
+  },
+  'xml-formatter': {
+    name: 'XML Formatter',
+    description: 'Format, validate, and beautify XML documents',
+    component: XMLFormatter,
   },
 };
 

@@ -26,7 +26,9 @@ import {
   Eye,
   QrCode,
   FileText,
-  Network
+  Network,
+  Database,
+  FileCode
 } from 'lucide-react';
 
 const tools = [
@@ -51,6 +53,9 @@ const tools = [
   { id: 'qr-code-generator', name: 'QR Code', icon: QrCode, category: 'generators' },
   { id: 'csv-converter', name: 'CSV Converter', icon: FileText, category: 'converters' },
   { id: 'markdown-converter', name: 'Markdown Converter', icon: FileText, category: 'converters' },
+  { id: 'yaml-converter', name: 'YAML Converter', icon: FileText, category: 'converters' },
+  { id: 'sql-formatter', name: 'SQL Formatter', icon: Database, category: 'database' },
+  { id: 'xml-formatter', name: 'XML Formatter', icon: FileCode, category: 'converters' },
 ];
 
 const categories = {
@@ -60,7 +65,8 @@ const categories = {
   generators: 'Generators',
   network: 'API & Network',
   design: 'CSS & Design',
-  text: 'Text Processing'
+  text: 'Text Processing',
+  database: 'Database Tools'
 };
 
 interface SidebarProps {
