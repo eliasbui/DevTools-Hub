@@ -35,7 +35,9 @@ import {
   Replace,
   List,
   Scissors,
-  Table
+  Table,
+  Lock,
+  FileKey
 } from 'lucide-react';
 
 const tools = [
@@ -76,6 +78,10 @@ const tools = [
   { id: 'sql-query-builder', name: 'Query Builder', icon: Table, category: 'database' },
   { id: 'connection-string-builder', name: 'Connection String', icon: LinkIcon, category: 'database' },
   { id: 'mock-data-generator', name: 'Mock Data', icon: Database, category: 'database' },
+  { id: 'ssl-certificate-analyzer', name: 'SSL Certificate', icon: Shield, category: 'security' },
+  { id: 'encryption-tools', name: 'Encryption', icon: Lock, category: 'security' }, 
+  { id: 'hmac-generator', name: 'HMAC Generator', icon: Key, category: 'security' },
+  { id: 'certificate-decoder', name: 'Certificate Decoder', icon: FileKey, category: 'security' },
 ];
 
 const categories = {

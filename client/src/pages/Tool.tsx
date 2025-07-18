@@ -37,6 +37,10 @@ import { DatabaseSchemaVisualizer } from '@/components/tools/DatabaseSchemaVisua
 import { SQLQueryBuilder } from '@/components/tools/SQLQueryBuilder';
 import { ConnectionStringBuilder } from '@/components/tools/ConnectionStringBuilder';
 import { MockDataGenerator } from '@/components/tools/MockDataGenerator';
+import { SSLCertificateAnalyzer } from '@/components/tools/SSLCertificateAnalyzer';
+import { EncryptionTools } from '@/components/tools/EncryptionTools';
+import { HMACGenerator } from '@/components/tools/HMACGenerator';
+import { CertificateDecoder } from '@/components/tools/CertificateDecoder';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -225,6 +229,26 @@ const tools = {
     name: 'Mock Data Generator',
     description: 'Generate realistic test data in JSON, CSV, or SQL format',
     component: MockDataGenerator,
+  },
+  'ssl-certificate-analyzer': {
+    name: 'SSL Certificate Analyzer',
+    description: 'Check certificate validity, expiry, and chain details',
+    component: SSLCertificateAnalyzer,
+  },
+  'encryption-tools': {
+    name: 'Encryption/Decryption Tools',
+    description: 'AES, DES, RSA encryption and decryption',
+    component: EncryptionTools,
+  },
+  'hmac-generator': {
+    name: 'HMAC Generator',
+    description: 'Generate message authentication codes',
+    component: HMACGenerator,
+  },
+  'certificate-decoder': {
+    name: 'Certificate Decoder',
+    description: 'Parse and decode X.509 certificates',
+    component: CertificateDecoder,
   },
 };
 
