@@ -29,7 +29,12 @@ import {
   Network,
   Database,
   FileCode,
-  Calculator
+  Calculator,
+  BarChart,
+  FileCode2,
+  Replace,
+  List,
+  Scissors
 } from 'lucide-react';
 
 const tools = [
@@ -59,6 +64,13 @@ const tools = [
   { id: 'xml-formatter', name: 'XML Formatter', icon: FileCode, category: 'converters' },
   { id: 'password-strength', name: 'Password Strength', icon: Shield, category: 'security' },
   { id: 'unit-converter', name: 'Unit Converter', icon: Calculator, category: 'converters' },
+  { id: 'text-statistics', name: 'Text Statistics', icon: BarChart, category: 'text' },
+  { id: 'text-encoder', name: 'Text Encoder', icon: FileCode2, category: 'text' },
+  { id: 'text-replacer', name: 'Text Replacer', icon: Replace, category: 'text' },
+  { id: 'line-tools', name: 'Line Tools', icon: List, category: 'text' },
+  { id: 'text-splitter', name: 'Text Splitter', icon: Scissors, category: 'text' },
+  { id: 'character-counter', name: 'Character Counter', icon: Calculator, category: 'text' },
+  { id: 'markdown-to-html', name: 'Markdown to HTML', icon: FileText, category: 'text' },
 ];
 
 const categories = {

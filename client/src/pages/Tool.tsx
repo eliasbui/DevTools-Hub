@@ -26,6 +26,13 @@ import { SQLFormatter } from '@/components/tools/SQLFormatter';
 import { XMLFormatter } from '@/components/tools/XMLFormatter';
 import { PasswordStrengthChecker } from '@/components/tools/PasswordStrengthChecker';
 import { UnitConverter } from '@/components/tools/UnitConverter';
+import { TextStatistics } from '@/components/tools/TextStatistics';
+import { TextEncoder } from '@/components/tools/TextEncoder';
+import { TextReplacer } from '@/components/tools/TextReplacer';
+import { LineTools } from '@/components/tools/LineTools';
+import { TextSplitter } from '@/components/tools/TextSplitter';
+import { CharacterCounter } from '@/components/tools/CharacterCounter';
+import { MarkdownToHtml } from '@/components/tools/MarkdownToHtml';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -159,6 +166,41 @@ const tools = {
     name: 'Unit Converter',
     description: 'Convert between various units (length, temperature, data, etc.)',
     component: UnitConverter,
+  },
+  'text-statistics': {
+    name: 'Text Statistics',
+    description: 'Analyze text for word count, readability, reading time, and more',
+    component: TextStatistics,
+  },
+  'text-encoder': {
+    name: 'Text Encoder/Decoder',
+    description: 'Encode/decode text using HTML entities, URL, Base64, Unicode, and more',
+    component: TextEncoder,
+  },
+  'text-replacer': {
+    name: 'Text Replacer',
+    description: 'Batch find and replace with support for multiple rules and regex',
+    component: TextReplacer,
+  },
+  'line-tools': {
+    name: 'Line Tools',
+    description: 'Sort, deduplicate, shuffle, filter, and manipulate lines of text',
+    component: LineTools,
+  },
+  'text-splitter': {
+    name: 'Text Splitter',
+    description: 'Split text by delimiter, length, words, lines, or regex patterns',
+    component: TextSplitter,
+  },
+  'character-counter': {
+    name: 'Character Counter',
+    description: 'Detailed character analysis with breakdown and frequency statistics',
+    component: CharacterCounter,
+  },
+  'markdown-to-html': {
+    name: 'Markdown to HTML',
+    description: 'Convert Markdown to HTML with live preview',
+    component: MarkdownToHtml,
   },
 };
 
