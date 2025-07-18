@@ -62,11 +62,19 @@ export const apiHistory = pgTable("api_history", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const favorites = pgTable("favorites", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id),
+  toolId: text("tool_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   toolUsage: many(toolUsage),
   savedData: many(savedData),
   apiHistory: many(apiHistory),
+  favorites: many(favorites),
 }));
 
 export const toolUsageRelations = relations(toolUsage, ({ one }) => ({
@@ -86,6 +94,13 @@ export const savedDataRelations = relations(savedData, ({ one }) => ({
 export const apiHistoryRelations = relations(apiHistory, ({ one }) => ({
   user: one(users, {
     fields: [apiHistory.userId],
+    references: [users.id],
+  }),
+}));
+
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  user: one(users, {
+    fields: [favorites.userId],
     references: [users.id],
   }),
 }));
@@ -120,6 +135,11 @@ export const insertApiHistorySchema = createInsertSchema(apiHistory).omit({
   createdAt: true 
 });
 
+export const insertFavoriteSchema = createInsertSchema(favorites).omit({ 
+  id: true, 
+  createdAt: true 
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -129,3 +149,5 @@ export type SavedData = typeof savedData.$inferSelect;
 export type InsertSavedData = z.infer<typeof insertSavedDataSchema>;
 export type ApiHistory = typeof apiHistory.$inferSelect;
 export type InsertApiHistory = z.infer<typeof insertApiHistorySchema>;
+export type Favorite = typeof favorites.$inferSelect;
+export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;

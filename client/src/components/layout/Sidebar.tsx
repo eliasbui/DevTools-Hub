@@ -39,7 +39,8 @@ import {
   Lock,
   FileKey,
   Archive,
-  FileImage
+  FileImage,
+  Star
 } from 'lucide-react';
 
 const tools = [
@@ -258,6 +259,27 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
         {/* Settings & Other Pages */}
         <div className="p-4 border-t border-border flex-shrink-0 space-y-2">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <Link href="/favorites">
+              <Button 
+                variant={location === '/favorites' ? 'default' : 'ghost'} 
+                className="w-full justify-start text-foreground animate-pulse-hover"
+                onClick={() => setIsOpen(false)}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.2 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Star className="w-4 h-4 mr-2" />
+                </motion.div>
+                Favorites
+              </Button>
+            </Link>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

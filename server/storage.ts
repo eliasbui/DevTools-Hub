@@ -3,6 +3,7 @@ import {
   toolUsage, 
   savedData, 
   apiHistory,
+  favorites,
   type User, 
   type InsertUser,
   type UpsertUser,
@@ -11,7 +12,9 @@ import {
   type SavedData,
   type InsertSavedData,
   type ApiHistory,
-  type InsertApiHistory
+  type InsertApiHistory,
+  type Favorite,
+  type InsertFavorite
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -41,6 +44,11 @@ export interface IStorage {
   saveApiHistory(history: InsertApiHistory): Promise<ApiHistory>;
   getApiHistory(userId: string, limit?: number): Promise<ApiHistory[]>;
   deleteApiHistory(id: number, userId: string): Promise<boolean>;
+  
+  // Favorites
+  addFavorite(favorite: InsertFavorite): Promise<Favorite>;
+  removeFavorite(userId: string, toolId: string): Promise<boolean>;
+  getFavorites(userId: string): Promise<Favorite[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -242,6 +250,29 @@ export class DatabaseStorage implements IStorage {
       .delete(apiHistory)
       .where(and(eq(apiHistory.id, id), eq(apiHistory.userId, userId)));
     return result.rowCount > 0;
+  }
+
+  async addFavorite(favorite: InsertFavorite): Promise<Favorite> {
+    const [newFavorite] = await db
+      .insert(favorites)
+      .values(favorite)
+      .returning();
+    return newFavorite;
+  }
+
+  async removeFavorite(userId: string, toolId: string): Promise<boolean> {
+    const result = await db
+      .delete(favorites)
+      .where(and(eq(favorites.userId, userId), eq(favorites.toolId, toolId)));
+    return result.rowCount > 0;
+  }
+
+  async getFavorites(userId: string): Promise<Favorite[]> {
+    return await db
+      .select()
+      .from(favorites)
+      .where(eq(favorites.userId, userId))
+      .orderBy(desc(favorites.createdAt));
   }
 }
 

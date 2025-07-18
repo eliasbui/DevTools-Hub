@@ -146,6 +146,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { registerAIRoutes } = await import("./routes/aiRoutes");
   registerAIRoutes(app);
 
+  // Favorites routes
+  const { registerFavoritesRoutes } = await import("./routes/favoritesRoutes");
+  registerFavoritesRoutes(app);
+
   // Health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });

@@ -8,6 +8,7 @@ import { Home } from "@/pages/Home";
 import { Tool } from "@/pages/Tool";
 import { Pricing } from "@/pages/Pricing";
 import { Settings } from "@/pages/Settings";
+import { Favorites } from "@/pages/Favorites";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,6 +27,7 @@ function Router() {
           <Route path="/tool/:id" component={Tool} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/settings" component={Settings} />
+          <Route path="/favorites" component={Favorites} />
         </>
       )}
       <Route component={NotFound} />
