@@ -23,11 +23,13 @@ import {
   Palette,
   Eye,
   QrCode,
-  FileText
+  FileText,
+  Network
 } from 'lucide-react';
 
 const tools = [
   { id: 'smart-paste', name: 'Smart Paste', icon: Wand2, category: 'featured' },
+  { id: 'data-visualization', name: 'Data Visualization', icon: Network, category: 'featured' },
   { id: 'json-formatter', name: 'JSON Formatter', icon: Code, category: 'converters' },
   { id: 'base64-tool', name: 'Base64 Encoder', icon: Key, category: 'converters' },
   { id: 'url-encoder', name: 'URL Encoder', icon: LinkIcon, category: 'converters' },

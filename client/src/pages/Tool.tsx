@@ -19,6 +19,7 @@ import { TextCaseConverter } from '@/components/tools/TextCaseConverter';
 import { QRCodeGenerator } from '@/components/tools/QRCodeGenerator';
 import { CSVConverter } from '@/components/tools/CSVConverter';
 import { MarkdownConverter } from '@/components/tools/MarkdownConverter';
+import { DataVisualization } from '@/components/tools/DataVisualization';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 
@@ -117,6 +118,11 @@ const tools = {
     name: 'Markdown Converter',
     description: 'Convert Markdown to HTML with live preview',
     component: MarkdownConverter,
+  },
+  'data-visualization': {
+    name: 'Data Visualization',
+    description: 'Visualize JSON, XML, YAML, and CSV data as interactive graphs',
+    component: DataVisualization,
   },
 };
 

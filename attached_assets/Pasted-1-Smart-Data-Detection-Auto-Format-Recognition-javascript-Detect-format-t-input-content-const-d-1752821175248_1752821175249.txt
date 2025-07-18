@@ -1,0 +1,89 @@
+1. Smart Data Detection
+Auto-Format Recognition:
+javascript// Detect format từ input content
+const detectFormat = (input: string) => {
+  if (input.trim().startsWith('{') || input.trim().startsWith('[')) return 'json'
+  if (input.includes('<?xml') || input.includes('<')) return 'xml'  
+  if (input.includes('---') && input.includes(':')) return 'yaml'
+  if (input.includes(',') && input.includes('\n')) return 'csv'
+  return 'text'
+}
+Validation & Error Handling:
+
+Real-time syntax validation
+Error highlighting với line numbers
+Suggestion for common fixes
+Partial parsing cho malformed data
+
+2. Interactive Graph Features
+Node Interactions:
+
+Click to expand/collapse
+Hover tooltips với detailed info
+Right-click context menu
+Drag-and-drop repositioning
+
+Navigation:
+
+Pan và zoom với mouse/touch
+Search-to-focus functionality
+Breadcrumb navigation
+Back/forward history
+
+Customization:
+
+Node size based on data properties
+Color coding by data types
+Edge styling for relationships
+Label customization
+
+3. Advanced Analysis Tools
+Data Insights:
+
+Structure complexity metrics
+Duplicate detection
+Missing fields analysis
+Type distribution charts
+
+Query Tools:
+
+JSONPath query executor
+XPath for XML data
+jq-style transformations
+Custom filter expressions
+
+Comparison Mode:
+
+Side-by-side visualization
+Diff highlighting
+Structure comparison
+Change tracking
+
+🔧 Performance Optimization
+Large Dataset Handling
+Virtualization Strategy:
+
+Canvas-based rendering cho performance với large networks
+Progressive loading với lazy expansion
+Level-of-detail rendering
+Memory management cho large graphs
+
+Performance Thresholds:
+
+Small (< 100 nodes): Full interactivity
+Medium (100-1000 nodes): Selective rendering
+Large (1000-10000 nodes): Clustering view
+Very Large (> 10000 nodes): Sampling + overview
+
+Optimization Techniques
+javascript// Clustering cho large datasets
+const clusterLargeData = (nodes: Node[], threshold: number) => {
+  if (nodes.length > threshold) {
+    return applyClustering(nodes, {
+      algorithm: 'hierarchical',
+      maxClusterSize: 50,
+      minDistance: 10
+    })
+  }
+  return nodes
+}
