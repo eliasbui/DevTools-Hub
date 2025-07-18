@@ -194,7 +194,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         {/* Search */}
         <div className="p-4 border-b border-border flex-shrink-0 pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
           <motion.div 
-            className="relative"
+            className="relative pl-[6px] pr-[6px]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
