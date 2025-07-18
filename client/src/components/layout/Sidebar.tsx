@@ -248,7 +248,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                   className={`w-full justify-start smooth-transition ${
                                     isActive 
                                       ? 'gradient-primary text-white shadow-lg' 
-                                      : 'text-foreground'
+                                      : 'text-foreground hover:bg-green-500/20 hover:text-green-700 dark:hover:text-green-400'
                                   }`}
                                   onClick={() => setIsOpen(false)}
                                 >
@@ -288,7 +288,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <Link href="/favorites">
               <Button 
                 variant={location === '/favorites' ? 'default' : 'ghost'} 
-                className="w-full justify-start text-foreground"
+                className="w-full justify-start text-foreground hover:bg-green-500/20 hover:text-green-700 dark:hover:text-green-400 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 <Star className="w-4 h-4 mr-2" />
@@ -304,7 +304,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <Link href="/settings">
               <Button 
                 variant={location === '/settings' ? 'default' : 'ghost'} 
-                className="w-full justify-start text-foreground"
+                className="w-full justify-start text-foreground hover:bg-green-500/20 hover:text-green-700 dark:hover:text-green-400 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 <Settings className="w-4 h-4 mr-2" />
