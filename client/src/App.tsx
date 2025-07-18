@@ -11,6 +11,7 @@ import { Settings } from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import { useAuth } from "@/hooks/useAuth";
+import { AIAssistant } from "@/components/AIAssistant";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -33,12 +34,23 @@ function Router() {
 }
 
 function App() {
+  const AppContent = () => {
+    const { isAuthenticated } = useAuth();
+    
+    return (
+      <>
+        <Router />
+        {isAuthenticated && <AIAssistant />}
+      </>
+    );
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <AppContent />
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

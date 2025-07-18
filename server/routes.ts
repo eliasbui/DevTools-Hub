@@ -142,6 +142,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
   app.use(userRoutes);
 
+  // AI routes
+  const { registerAIRoutes } = await import("./routes/aiRoutes");
+  registerAIRoutes(app);
+
   // Health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
