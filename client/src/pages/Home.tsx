@@ -3,6 +3,9 @@ import { SmartPaste } from '@/components/tools/SmartPaste';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
+import { useAuth } from '@/hooks/useAuth';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { 
   Code, 
   Key, 
@@ -15,7 +18,9 @@ import {
   Hash, 
   Type,
   CheckCircle,
-  History
+  History,
+  LogOut,
+  Sparkles
 } from 'lucide-react';
 
 const quickTools = [
@@ -25,12 +30,63 @@ const quickTools = [
 ];
 
 export function Home() {
+  const { user } = useAuth();
+
   return (
     <Layout 
       title="Smart Paste & Auto-Detection"
       description="Paste any content and let us automatically detect and format it"
     >
       <div className="space-y-6">
+        {/* User Profile Section */}
+        {user && (
+          <Card className="border-primary/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={user.profileImageUrl || undefined} />
+                    <AvatarFallback>
+                      {user.firstName?.[0]}{user.lastName?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold">
+                        {user.firstName} {user.lastName}
+                      </h3>
+                      <Badge variant={user.plan === 'free' ? 'secondary' : 'default'}>
+                        {user.plan === 'free' ? <span>Free</span> : <><Sparkles className="w-3 h-3 mr-1" /> {user.plan}</>}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                    {user.plan === 'free' && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {100 - (user.dailyUsageCount || 0)} operations remaining today
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {user.plan === 'free' && (
+                    <Link href="/pricing">
+                      <Button variant="outline" size="sm">
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Upgrade
+                      </Button>
+                    </Link>
+                  )}
+                  <a href="/api/logout">
+                    <Button variant="ghost" size="sm">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         {/* Smart Paste Component */}
         <SmartPaste />
 

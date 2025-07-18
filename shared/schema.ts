@@ -1,18 +1,38 @@
-import { pgTable, text, serial, integer, boolean, json, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, json, timestamp, varchar, jsonb, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
 
+// Session storage table for Replit Auth
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// Users table with Replit Auth and subscription fields
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  id: varchar("id").primaryKey().notNull(), // Replit sub (user ID)
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  plan: varchar("plan").default('free'), // free, pro, team, enterprise
+  subscriptionStatus: varchar("subscription_status").default('active'), // active, cancelled, expired
+  subscriptionEnd: timestamp("subscription_end"),
+  dailyUsageCount: integer("daily_usage_count").default(0),
+  lastUsageReset: timestamp("last_usage_reset").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const toolUsage = pgTable("tool_usage", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
+  userId: varchar("user_id").references(() => users.id),
   toolId: text("tool_id").notNull(),
   toolName: text("tool_name").notNull(),
   usageCount: integer("usage_count").default(1),
@@ -22,7 +42,7 @@ export const toolUsage = pgTable("tool_usage", {
 
 export const savedData = pgTable("saved_data", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
+  userId: varchar("user_id").references(() => users.id),
   toolId: text("tool_id").notNull(),
   title: text("title").notNull(),
   content: json("content").notNull(),
@@ -32,7 +52,7 @@ export const savedData = pgTable("saved_data", {
 
 export const apiHistory = pgTable("api_history", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
+  userId: varchar("user_id").references(() => users.id),
   method: text("method").notNull(),
   url: text("url").notNull(),
   headers: json("headers"),
@@ -71,10 +91,17 @@ export const apiHistoryRelations = relations(apiHistory, ({ one }) => ({
 }));
 
 // Insert schemas
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const insertUserSchema = createInsertSchema(users).omit({
+  createdAt: true,
+  updatedAt: true,
+  dailyUsageCount: true,
+  lastUsageReset: true,
+  plan: true,
+  subscriptionStatus: true,
 });
+
+// UpsertUser for Replit Auth
+export type UpsertUser = typeof users.$inferInsert;
 
 export const insertToolUsageSchema = createInsertSchema(toolUsage).omit({ 
   id: true, 

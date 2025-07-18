@@ -6,13 +6,25 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Home } from "@/pages/Home";
 import { Tool } from "@/pages/Tool";
+import { Pricing } from "@/pages/Pricing";
 import NotFound from "@/pages/not-found";
+import Landing from "@/pages/Landing";
+import { useAuth } from "@/hooks/useAuth";
 
 function Router() {
+  const { isAuthenticated, isLoading } = useAuth();
+
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/tool/:id" component={Tool} />
+      {isLoading || !isAuthenticated ? (
+        <Route path="/" component={Landing} />
+      ) : (
+        <>
+          <Route path="/" component={Home} />
+          <Route path="/tool/:id" component={Tool} />
+          <Route path="/pricing" component={Pricing} />
+        </>
+      )}
       <Route component={NotFound} />
     </Switch>
   );

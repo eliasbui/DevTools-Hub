@@ -5,6 +5,7 @@ import {
   apiHistory,
   type User, 
   type InsertUser,
+  type UpsertUser,
   type ToolUsage,
   type InsertToolUsage,
   type SavedData,
@@ -17,43 +18,110 @@ import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // User management
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  updateUserPlan(userId: string, plan: string, subscriptionEnd?: Date): Promise<User>;
+  incrementDailyUsage(userId: string): Promise<{ allowed: boolean; count: number }>;
+  resetDailyUsage(userId: string): Promise<void>;
   
   // Tool usage tracking
   recordToolUsage(usage: InsertToolUsage): Promise<ToolUsage>;
-  getToolUsage(userId: number, toolId: string): Promise<ToolUsage | undefined>;
-  getUserToolUsage(userId: number): Promise<ToolUsage[]>;
+  getToolUsage(userId: string, toolId: string): Promise<ToolUsage | undefined>;
+  getUserToolUsage(userId: string): Promise<ToolUsage[]>;
   
   // Saved data management
   saveData(data: InsertSavedData): Promise<SavedData>;
-  getSavedData(userId: number, toolId?: string): Promise<SavedData[]>;
-  deleteSavedData(id: number, userId: number): Promise<boolean>;
+  getSavedData(userId: string, toolId?: string): Promise<SavedData[]>;
+  deleteSavedData(id: number, userId: string): Promise<boolean>;
   
   // API history
   saveApiHistory(history: InsertApiHistory): Promise<ApiHistory>;
-  getApiHistory(userId: number, limit?: number): Promise<ApiHistory[]>;
-  deleteApiHistory(id: number, userId: number): Promise<boolean>;
+  getApiHistory(userId: string, limit?: number): Promise<ApiHistory[]>;
+  deleteApiHistory(id: number, userId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
-  async getUser(id: number): Promise<User | undefined> {
+  async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
-      .values(insertUser)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
       .returning();
     return user;
+  }
+
+  async updateUserPlan(userId: string, plan: string, subscriptionEnd?: Date): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        plan,
+        subscriptionEnd,
+        subscriptionStatus: subscriptionEnd ? 'active' : 'expired',
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async incrementDailyUsage(userId: string): Promise<{ allowed: boolean; count: number }> {
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Reset daily usage if it's a new day
+    const now = new Date();
+    const lastReset = user.lastUsageReset || new Date(0);
+    const isNewDay = now.toDateString() !== lastReset.toDateString();
+    
+    if (isNewDay) {
+      await this.resetDailyUsage(userId);
+      const currentCount = 1;
+      const allowed = user.plan === 'free' ? currentCount <= 100 : true;
+      
+      await db
+        .update(users)
+        .set({ dailyUsageCount: currentCount })
+        .where(eq(users.id, userId));
+      
+      return { allowed, count: currentCount };
+    }
+
+    // Check usage limits
+    const currentCount = (user.dailyUsageCount || 0) + 1;
+    const allowed = user.plan === 'free' ? currentCount <= 100 : true;
+    
+    if (allowed) {
+      await db
+        .update(users)
+        .set({ dailyUsageCount: currentCount })
+        .where(eq(users.id, userId));
+    }
+    
+    return { allowed, count: currentCount };
+  }
+
+  async resetDailyUsage(userId: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        dailyUsageCount: 0,
+        lastUsageReset: new Date()
+      })
+      .where(eq(users.id, userId));
   }
 
   async recordToolUsage(usage: InsertToolUsage): Promise<ToolUsage> {
@@ -81,7 +149,7 @@ export class DatabaseStorage implements IStorage {
     return newUsage;
   }
 
-  async getToolUsage(userId: number, toolId: string): Promise<ToolUsage | undefined> {
+  async getToolUsage(userId: string, toolId: string): Promise<ToolUsage | undefined> {
     const [usage] = await db
       .select()
       .from(toolUsage)
@@ -89,7 +157,7 @@ export class DatabaseStorage implements IStorage {
     return usage || undefined;
   }
 
-  async getUserToolUsage(userId: number): Promise<ToolUsage[]> {
+  async getUserToolUsage(userId: string): Promise<ToolUsage[]> {
     return await db
       .select()
       .from(toolUsage)
@@ -105,7 +173,7 @@ export class DatabaseStorage implements IStorage {
     return saved;
   }
 
-  async getSavedData(userId: number, toolId?: string): Promise<SavedData[]> {
+  async getSavedData(userId: string, toolId?: string): Promise<SavedData[]> {
     let query = db
       .select()
       .from(savedData)
@@ -118,7 +186,7 @@ export class DatabaseStorage implements IStorage {
     return await query.orderBy(desc(savedData.createdAt));
   }
 
-  async deleteSavedData(id: number, userId: number): Promise<boolean> {
+  async deleteSavedData(id: number, userId: string): Promise<boolean> {
     const result = await db
       .delete(savedData)
       .where(and(eq(savedData.id, id), eq(savedData.userId, userId)));
@@ -133,7 +201,7 @@ export class DatabaseStorage implements IStorage {
     return saved;
   }
 
-  async getApiHistory(userId: number, limit: number = 50): Promise<ApiHistory[]> {
+  async getApiHistory(userId: string, limit: number = 50): Promise<ApiHistory[]> {
     return await db
       .select()
       .from(apiHistory)
@@ -142,7 +210,7 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
   }
 
-  async deleteApiHistory(id: number, userId: number): Promise<boolean> {
+  async deleteApiHistory(id: number, userId: string): Promise<boolean> {
     const result = await db
       .delete(apiHistory)
       .where(and(eq(apiHistory.id, id), eq(apiHistory.userId, userId)));

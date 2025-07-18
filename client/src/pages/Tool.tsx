@@ -1,4 +1,5 @@
 import { useParams } from 'wouter';
+import { useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { JSONFormatter } from '@/components/tools/JSONFormatter';
 import { Base64Tool } from '@/components/tools/Base64Tool';
@@ -22,6 +23,11 @@ import { MarkdownConverter } from '@/components/tools/MarkdownConverter';
 import { DataVisualization } from '@/components/tools/DataVisualization';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { isUnauthorizedError } from '@/lib/authUtils';
 
 const tools = {
   'json-formatter': {
@@ -130,6 +136,51 @@ export function Tool() {
   const params = useParams();
   const toolId = params.id as string;
   const tool = tools[toolId as keyof typeof tools];
+  const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+
+  // Track tool usage
+  const trackUsage = useMutation({
+    mutationFn: async () => {
+      if (!isAuthenticated || !tool) return;
+      
+      await apiRequest('/api/tool-usage', {
+        method: 'POST',
+        body: JSON.stringify({
+          toolId,
+          toolName: tool.name,
+        }),
+      });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      
+      // Check if it's a usage limit error
+      if (error.message.includes('Daily limit exceeded')) {
+        toast({
+          title: "Daily Limit Exceeded",
+          description: "Upgrade to Pro for unlimited usage",
+          variant: "destructive",
+        });
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (tool && isAuthenticated) {
+      trackUsage.mutate();
+    }
+  }, [toolId, isAuthenticated]);
 
   if (!tool) {
     return (
