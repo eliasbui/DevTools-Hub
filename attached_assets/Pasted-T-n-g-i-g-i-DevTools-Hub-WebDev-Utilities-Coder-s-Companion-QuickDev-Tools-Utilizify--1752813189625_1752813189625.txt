@@ -1,0 +1,147 @@
+Tên gọi gợi ý
+DevTools Hub
+
+WebDev Utilities
+
+Coder's Companion
+
+QuickDev Tools
+
+Utilizify
+
+Các tính năng cốt lõi (Core Features)
+"Smart Paste" & Auto-detection:
+
+Mô tả: Đây là tính năng trung tâm. Một ô input lớn ở giữa trang hoặc ở vị trí nổi bật. Khi người dùng dán bất kỳ đoạn văn bản nào vào đây, ứng dụng sẽ tự động phân tích và nhận diện định dạng (JSON, Base64, JWT, URL, Timestamp, Hex Color, XML, YAML, v.v.).
+
+Hành vi:
+
+Nếu là JSON, tự động hiển thị dưới dạng đã được format (có thể là cây thư mục có thể collapse/expand) và đưa ra các tùy chọn như "Minify JSON", "Copy Path", "Validate JSON".
+
+Nếu là Base64, hiển thị cả bản gốc và bản đã decode, cùng nút "Encode" / "Decode" nhanh.
+
+Nếu là JWT, phân tích và hiển thị header, payload, và signature riêng biệt (được định dạng JSON). Cảnh báo nếu signature không hợp lệ.
+
+Nếu là Timestamp (Unix), tự động chuyển đổi sang định dạng ngày giờ đọc được (có thể chọn múi giờ).
+
+Nếu là URL, hiển thị bản đã decode và cung cấp nút "Encode URL".
+
+Nếu là Hex Color Code (ví dụ: #FF0000), hiển thị màu đó và các giá trị RGB/RGBA tương ứng.
+
+Giao diện: Đề xuất một giao diện chia đôi: một bên là ô input/kết quả tự động, một bên là các nút hành động hoặc kết quả chi tiết hơn.
+
+Bộ chuyển đổi và định dạng dữ liệu (Data Converters & Formatters):
+
+JSON/YAML/XML Formatter/Minifier/Validator:
+
+Input: Textbox để dán nội dung.
+
+Output: Textbox hiển thị kết quả.
+
+Tùy chọn: Nút "Format", "Minify", "Validate", "Copy".
+
+Base64 Encoder/Decoder:
+
+Input: Textbox.
+
+Output: Textbox.
+
+Tùy chọn: "Encode", "Decode", "Copy".
+
+URL Encoder/Decoder: Tương tự như Base64.
+
+Timestamp Converter:
+
+Input: Unix Timestamp hoặc ngày giờ (dạng text).
+
+Output: Chuyển đổi qua lại.
+
+Tùy chọn: Lựa chọn múi giờ, định dạng hiển thị.
+
+CSV to JSON / JSON to CSV:
+
+Input: Ô text để dán nội dung CSV/JSON.
+
+Output: Hiển thị kết quả.
+
+Tùy chọn: Tùy chọn phân tách (cho CSV), tùy chọn định dạng (cho JSON).
+
+Công cụ kiểm tra và gỡ lỗi (Validation & Debugging Tools):
+
+Regex Tester:
+
+Input: Ô cho Regex pattern, ô cho test string.
+
+Output: Hiển thị các match, group, hoặc thông báo không match.
+
+Tính năng: Giải thích cơ bản về Regex (tooltip hoặc popup).
+
+Text Diff Checker:
+
+Input: Hai ô text.
+
+Output: Hiển thị sự khác biệt bằng cách highlight các dòng/ký tự thay đổi.
+
+Tùy chọn: Chế độ so sánh dòng/ký tự.
+
+JWT Debugger: (Đã có trong "Smart Paste", nhưng có thể có một trang riêng biệt để tải JWT từ file hoặc chi tiết hơn).
+
+Công cụ tạo dữ liệu (Generators):
+
+UUID/Nano ID Generator:
+
+Tùy chọn: Chọn phiên bản UUID (v1, v4, v5), số lượng ID muốn tạo.
+
+Nút: "Generate", "Copy".
+
+Random String Generator:
+
+Tùy chọn: Độ dài, bao gồm ký tự hoa/thường, số, ký tự đặc biệt.
+
+Nút: "Generate", "Copy".
+
+Hash Generator (MD5, SHA1, SHA256, SHA512):
+
+Input: Textbox.
+
+Output: Các giá trị hash tương ứng.
+
+Nút: "Copy".
+
+Lorem Ipsum Generator:
+
+Tùy chọn: Số lượng đoạn văn, số lượng từ.
+
+Nút: "Generate", "Copy".
+
+Các tính năng nâng cao (Advanced Features)
+Offline Support (PWA - Progressive Web App):
+
+Sử dụng Service Workers để lưu trữ tài nguyên cần thiết, cho phép ứng dụng hoạt động ngay cả khi không có kết nối internet sau lần truy cập đầu tiên. Điều này tăng tốc độ tải và đảm bảo quyền riêng tư dữ liệu.
+
+Persistent State (Local Storage):
+
+Lưu trữ cài đặt người dùng, lịch sử thao tác, và thậm chí cả nội dung gần đây trong Local Storage để khi người dùng quay lại, mọi thứ vẫn còn nguyên.
+
+Navigation & UI/UX:
+
+Sidebar Navigation: Một thanh sidebar ở bên trái để liệt kê tất cả các công cụ, có thể phân loại theo nhóm (Data, Text, Generators, Security).
+
+Search Functionality: Thanh tìm kiếm toàn cục để nhanh chóng tìm và chuyển đến công cụ mong muốn.
+
+Responsive Design: Đảm bảo ứng dụng hiển thị tốt trên cả desktop và thiết bị di động.
+
+Dark/Light Mode Toggle: Tùy chọn chuyển đổi chế độ giao diện.
+
+Clipboard Integration: Nút "Copy" ở khắp mọi nơi để dễ dàng sao chép kết quả.
+
+Công nghệ đề xuất (Web App Stack)
+Frontend Framework:
+
+Nextjs: Cung cấp cấu trúc mạnh mẽ, khả năng component hóa, và quản lý state hiệu quả cho một ứng dụng phức tạp. React hoặc Vue thường được ưa chuộng vì sự linh hoạt và cộng đồng lớn.
+
+Svelte / Lit: Nhẹ hơn và có thể mang lại hiệu suất tốt hơn cho một ứng dụng tập trung vào tiện ích đơn giản.
+
+Styling:
+
+REUI, Tailwind CSS / Styled Components / CSS Modules: Để tạo giao diện hiện đại và tùy chỉnh dễ dàng.
