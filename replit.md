@@ -4,6 +4,17 @@
 
 This is a comprehensive web application for developers that provides a collection of data conversion, formatting, and utility tools. The application features a "Smart Paste" functionality that automatically detects and formats various data types (JSON, JWT, Base64, URLs, timestamps, etc.) along with dedicated tools for specific tasks.
 
+## Recent Changes (January 2025)
+
+✓ **Database Integration Complete**: Successfully migrated from in-memory storage to PostgreSQL database
+✓ **Schema Implementation**: Created comprehensive database schema with 4 tables (users, tool_usage, saved_data, api_history)
+✓ **API Routes**: Added complete REST API endpoints for data persistence and retrieval
+✓ **Storage Layer**: Implemented DatabaseStorage class with full CRUD operations
+✓ **Database Connection**: Configured Neon PostgreSQL connection with Drizzle ORM
+✓ **Schema Migration**: Successfully applied database schema using `npm run db:push`
+
+→ **Next Steps**: Frontend integration to use database persistence features
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -73,9 +84,14 @@ Preferred communication style: Simple, everyday language.
 ## Database Schema
 
 The application uses Drizzle ORM with PostgreSQL support:
-- **Users Table**: Basic user management (id, username, password)
+- **Users Table**: Basic user management (id, username, password, createdAt)
+- **Tool Usage Table**: Track tool usage statistics (id, userId, toolId, toolName, usageCount, lastUsed, createdAt)
+- **Saved Data Table**: Store user-saved data and snippets (id, userId, toolId, title, content, createdAt, updatedAt)
+- **API History Table**: Store API request history (id, userId, method, url, headers, body, responseStatus, responseTime, createdAt)
 - **Schema Location**: `/shared/schema.ts` for shared types
 - **Migrations**: Automated via Drizzle Kit
+- **Database Connection**: Configured via `/server/db.ts` with Neon PostgreSQL
+- **Storage Layer**: Implemented in `/server/storage.ts` with complete CRUD operations
 
 ## Deployment Strategy
 
