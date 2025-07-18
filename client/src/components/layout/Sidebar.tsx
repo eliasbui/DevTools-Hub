@@ -59,6 +59,7 @@ const tools = [
   { id: 'http-client', name: 'HTTP Client', icon: Send, category: 'network' },
   { id: 'css-grid-generator', name: 'CSS Grid Generator', icon: Grid, category: 'design' },
   { id: 'color-palette', name: 'Color Palette', icon: Palette, category: 'design' },
+  { id: 'color-converter', name: 'Color Converter', icon: Palette, category: 'design' },
   { id: 'box-shadow-generator', name: 'Box Shadow', icon: Eye, category: 'design' },
   { id: 'text-case-converter', name: 'Text Case', icon: Type, category: 'text' },
   { id: 'qr-code-generator', name: 'QR Code', icon: QrCode, category: 'generators' },

@@ -48,6 +48,7 @@ import { ImageConverter } from '@/components/tools/ImageConverter';
 import { CodeMinifier } from '@/components/tools/CodeMinifier';
 import { SVGOptimizer } from '@/components/tools/SVGOptimizer';
 import { CronExpressionBuilder } from '@/components/tools/CronExpressionBuilder';
+import { ColorConverter } from '@/components/tools/ColorConverter';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -291,6 +292,11 @@ const tools = {
     name: 'Cron Expression Builder',
     description: 'Build and test cron expressions visually',
     component: CronExpressionBuilder,
+  },
+  'color-converter': {
+    name: 'Color Converter',
+    description: 'Convert colors between HEX, RGB, HSL, HSV, CMYK, and LAB formats',
+    component: ColorConverter,
   },
 };
 

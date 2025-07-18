@@ -71,6 +71,17 @@ export function SmartPaste() {
             </Button>
           </div>
         );
+      case 'color':
+        return (
+          <div className="flex space-x-2">
+            <Button size="sm" variant="outline">
+              Convert Format
+            </Button>
+            <Button size="sm" variant="outline">
+              Generate Palette
+            </Button>
+          </div>
+        );
       default:
         return null;
     }
@@ -94,7 +105,7 @@ export function SmartPaste() {
             <span>Smart Paste</span>
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Auto-detects: JSON, Base64, JWT, URLs, Timestamps, Hex Colors, XML, YAML
+            Auto-detects: JSON, Base64, JWT, URLs, Timestamps, Colors, XML, YAML
           </p>
         </CardHeader>
         <CardContent>
