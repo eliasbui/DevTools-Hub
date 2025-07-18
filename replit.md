@@ -55,7 +55,9 @@ This is a comprehensive web application for developers that provides a collectio
 ✓ **File Sum Calculator**: Advanced file analysis with encoding detection, line/word/character statistics, entropy calculation
 ✓ **Secure ZIP Viewer**: Client-side archive browser with security checks, path traversal protection, zip bomb detection
 
-→ **Total Tools**: 41 developer tools now available in the application
+✓ **Image Converter**: Advanced format conversion with WebP/AVIF support, batch processing, client-side optimization
+
+→ **Total Tools**: 42 developer tools now available in the application
 
 ## User Preferences
 
@@ -95,7 +97,7 @@ Preferred communication style: Simple, everyday language.
 - **Text Processing (8)**: Case converter, Text statistics, Text encoder/decoder, Text replacer, Line tools, Text splitter, Character counter, Markdown to HTML
 - **Database Tools (5)**: SQL formatter, Schema visualizer (ERD), SQL query builder, Connection string builder, Mock data generator
 - **Security Tools (5)**: Password strength checker, SSL certificate analyzer, Encryption/decryption tools, HMAC generator, Certificate decoder
-- **File Tools (3)**: File checksum calculator, File sum calculator (analyzer), Secure ZIP viewer
+- **File Tools (4)**: File checksum calculator, File sum calculator (analyzer), Secure ZIP viewer, Image converter
 
 #### User Interface
 - **Responsive Design**: Mobile-first approach with adaptive layouts

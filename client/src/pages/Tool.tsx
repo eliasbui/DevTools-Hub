@@ -44,6 +44,7 @@ import { CertificateDecoder } from '@/components/tools/CertificateDecoder';
 import { FileChecksumCalculator } from '@/components/tools/FileChecksumCalculator';
 import { FileSumCalculator } from '@/components/tools/FileSumCalculator';
 import { SecureZipViewer } from '@/components/tools/SecureZipViewer';
+import { ImageConverter } from '@/components/tools/ImageConverter';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -267,6 +268,11 @@ const tools = {
     name: 'Secure ZIP Viewer',
     description: 'Browse archives safely with security checks',
     component: SecureZipViewer,
+  },
+  'image-converter': {
+    name: 'Image Converter',
+    description: 'Convert images between formats with optimization',
+    component: ImageConverter,
   },
 };
 

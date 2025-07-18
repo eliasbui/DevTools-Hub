@@ -38,7 +38,8 @@ import {
   Table,
   Lock,
   FileKey,
-  Archive
+  Archive,
+  FileImage
 } from 'lucide-react';
 
 const tools = [
@@ -86,6 +87,7 @@ const tools = [
   { id: 'file-checksum-calculator', name: 'File Checksum', icon: Hash, category: 'file' },
   { id: 'file-sum-calculator', name: 'File Analyzer', icon: BarChart, category: 'file' },
   { id: 'secure-zip-viewer', name: 'ZIP Viewer', icon: Archive, category: 'file' },
+  { id: 'image-converter', name: 'Image Converter', icon: FileImage, category: 'file' },
 ];
 
 const categories = {
