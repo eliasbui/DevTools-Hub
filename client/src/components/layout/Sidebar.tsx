@@ -28,7 +28,8 @@ import {
   FileText,
   Network,
   Database,
-  FileCode
+  FileCode,
+  Calculator
 } from 'lucide-react';
 
 const tools = [
@@ -56,6 +57,8 @@ const tools = [
   { id: 'yaml-converter', name: 'YAML Converter', icon: FileText, category: 'converters' },
   { id: 'sql-formatter', name: 'SQL Formatter', icon: Database, category: 'database' },
   { id: 'xml-formatter', name: 'XML Formatter', icon: FileCode, category: 'converters' },
+  { id: 'password-strength', name: 'Password Strength', icon: Shield, category: 'security' },
+  { id: 'unit-converter', name: 'Unit Converter', icon: Calculator, category: 'converters' },
 ];
 
 const categories = {
@@ -66,7 +69,8 @@ const categories = {
   network: 'API & Network',
   design: 'CSS & Design',
   text: 'Text Processing',
-  database: 'Database Tools'
+  database: 'Database Tools',
+  security: 'Security & Encryption'
 };
 
 interface SidebarProps {

@@ -24,6 +24,8 @@ import { DataVisualization } from '@/components/tools/DataVisualization';
 import { YAMLConverter } from '@/components/tools/YAMLConverter';
 import { SQLFormatter } from '@/components/tools/SQLFormatter';
 import { XMLFormatter } from '@/components/tools/XMLFormatter';
+import { PasswordStrengthChecker } from '@/components/tools/PasswordStrengthChecker';
+import { UnitConverter } from '@/components/tools/UnitConverter';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -148,6 +150,16 @@ const tools = {
     description: 'Format, validate, and beautify XML documents',
     component: XMLFormatter,
   },
+  'password-strength': {
+    name: 'Password Strength Checker',
+    description: 'Analyze password strength, entropy, and security',
+    component: PasswordStrengthChecker,
+  },
+  'unit-converter': {
+    name: 'Unit Converter',
+    description: 'Convert between various units (length, temperature, data, etc.)',
+    component: UnitConverter,
+  },
 };
 
 export function Tool() {
@@ -162,12 +174,9 @@ export function Tool() {
     mutationFn: async () => {
       if (!isAuthenticated || !tool) return;
       
-      await apiRequest('/api/tool-usage', {
-        method: 'POST',
-        body: JSON.stringify({
-          toolId,
-          toolName: tool.name,
-        }),
+      await apiRequest('POST', '/api/tool-usage', {
+        toolId,
+        toolName: tool.name,
       });
     },
     onError: (error) => {
