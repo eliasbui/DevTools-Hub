@@ -39,75 +39,7 @@ export function Home() {
       description="Paste any content and let us automatically detect and format it"
     >
       <div className="space-y-6">
-        {/* User Profile Section */}
-        {user && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card className="border-primary/20 smooth-transition hover:shadow-lg">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={user.profileImageUrl || undefined} />
-                        <AvatarFallback>
-                          {user.firstName?.[0]}{user.lastName?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                    </motion.div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold">
-                          {user.firstName} {user.lastName}
-                        </h3>
-                        <motion.div
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Badge variant={user.plan === 'free' ? 'secondary' : 'default'}>
-                            {user.plan === 'free' ? <span>Free</span> : <><Sparkles className="w-3 h-3 mr-1" /> {user.plan}</>}
-                          </Badge>
-                        </motion.div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
-                      {user.plan === 'free' && (
-                        <motion.p 
-                          className="text-xs text-muted-foreground mt-1"
-                          animate={{ opacity: [0.5, 1, 0.5] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
-                          {100 - (user.dailyUsageCount || 0)} operations remaining today
-                        </motion.p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {user.plan === 'free' && (
-                      <Link href="/pricing">
-                        <Button variant="outline" size="sm">
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Upgrade
-                        </Button>
-                      </Link>
-                    )}
-                    <a href="/api/logout">
-                      <Button variant="ghost" size="sm">
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Logout
-                      </Button>
-                    </a>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
+        
         {/* Smart Paste Component */}
         <SmartPaste />
 
