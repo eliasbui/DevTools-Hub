@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Home } from "@/pages/Home";
 import { Tool } from "@/pages/Tool";
 import { Pricing } from "@/pages/Pricing";
+import { Settings } from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,6 +24,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/tool/:id" component={Tool} />
           <Route path="/pricing" component={Pricing} />
+          <Route path="/settings" component={Settings} />
         </>
       )}
       <Route component={NotFound} />

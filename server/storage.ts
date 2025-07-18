@@ -20,6 +20,8 @@ export interface IStorage {
   // User management
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUser(id: string, data: { firstName?: string; lastName?: string }): Promise<User>;
+  deleteUser(id: string): Promise<void>;
   updateUserPlan(userId: string, plan: string, subscriptionEnd?: Date): Promise<User>;
   incrementDailyUsage(userId: string): Promise<{ allowed: boolean; count: number }>;
   resetDailyUsage(userId: string): Promise<void>;
@@ -32,6 +34,7 @@ export interface IStorage {
   // Saved data management
   saveData(data: InsertSavedData): Promise<SavedData>;
   getSavedData(userId: string, toolId?: string): Promise<SavedData[]>;
+  getUserSavedData(userId: string): Promise<SavedData[]>;
   deleteSavedData(id: number, userId: string): Promise<boolean>;
   
   // API history
@@ -59,6 +62,26 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  async updateUser(id: string, data: { firstName?: string; lastName?: string }): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    // Delete all user data
+    await db.delete(toolUsage).where(eq(toolUsage.userId, id));
+    await db.delete(savedData).where(eq(savedData.userId, id));
+    await db.delete(apiHistory).where(eq(apiHistory.userId, id));
+    await db.delete(users).where(eq(users.id, id));
   }
 
   async updateUserPlan(userId: string, plan: string, subscriptionEnd?: Date): Promise<User> {
@@ -184,6 +207,10 @@ export class DatabaseStorage implements IStorage {
     }
     
     return await query.orderBy(desc(savedData.createdAt));
+  }
+
+  async getUserSavedData(userId: string): Promise<SavedData[]> {
+    return this.getSavedData(userId);
   }
 
   async deleteSavedData(id: number, userId: string): Promise<boolean> {

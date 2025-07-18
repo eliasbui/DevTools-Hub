@@ -7,6 +7,7 @@ import {
   insertApiHistorySchema 
 } from "@shared/schema";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import userRoutes from "./routes/userRoutes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -137,6 +138,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to delete API history" });
     }
   });
+
+  // User routes
+  app.use(userRoutes);
 
   // Health check
   app.get("/api/health", (req, res) => {

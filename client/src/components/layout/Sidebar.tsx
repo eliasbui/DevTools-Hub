@@ -255,22 +255,28 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           </nav>
         </ScrollArea>
 
-        {/* Settings */}
-        <div className="p-4 border-t border-border flex-shrink-0">
+        {/* Settings & Other Pages */}
+        <div className="p-4 border-t border-border flex-shrink-0 space-y-2">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
           >
-            <Button variant="ghost" className="w-full justify-start text-foreground animate-pulse-hover">
-              <motion.div
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
+            <Link href="/settings">
+              <Button 
+                variant={location === '/settings' ? 'default' : 'ghost'} 
+                className="w-full justify-start text-foreground animate-pulse-hover"
+                onClick={() => setIsOpen(false)}
               >
-                <Settings className="w-4 h-4 mr-2" />
-              </motion.div>
-              Settings
-            </Button>
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                </motion.div>
+                Settings
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </motion.div>
