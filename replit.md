@@ -33,10 +33,13 @@ Preferred communication style: Simple, everyday language.
 - **Context-aware Actions**: Offers relevant tools based on detected data type
 
 #### Tool Suite
-- **Data Converters**: JSON formatter, Base64 encoder/decoder, URL encoder/decoder
+- **Data Converters**: JSON formatter, Base64 encoder/decoder, URL encoder/decoder, CSV converter, Markdown converter
 - **Validators**: Regex tester, JWT debugger, text diff checker
-- **Generators**: UUID generator, hash generator, Lorem Ipsum generator
+- **Generators**: UUID generator, hash generator, Lorem Ipsum generator, password generator, QR code generator
 - **Timestamp Tools**: Unix timestamp conversion with timezone support
+- **API & Network**: HTTP client with request history, cURL generation
+- **CSS & Design**: Grid generator, color palette generator, box shadow generator
+- **Text Processing**: Case converter with multiple formats
 
 #### User Interface
 - **Responsive Design**: Mobile-first approach with adaptive layouts

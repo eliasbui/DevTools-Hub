@@ -17,7 +17,13 @@ import {
   Type,
   Settings,
   Menu,
-  X
+  X,
+  Send,
+  Grid,
+  Palette,
+  Eye,
+  QrCode,
+  FileText
 } from 'lucide-react';
 
 const tools = [
@@ -32,13 +38,25 @@ const tools = [
   { id: 'uuid-generator', name: 'UUID Generator', icon: Fingerprint, category: 'generators' },
   { id: 'hash-generator', name: 'Hash Generator', icon: Hash, category: 'generators' },
   { id: 'lorem-generator', name: 'Lorem Ipsum', icon: Type, category: 'generators' },
+  { id: 'password-generator', name: 'Password Generator', icon: Shield, category: 'generators' },
+  { id: 'http-client', name: 'HTTP Client', icon: Send, category: 'network' },
+  { id: 'css-grid-generator', name: 'CSS Grid Generator', icon: Grid, category: 'design' },
+  { id: 'color-palette', name: 'Color Palette', icon: Palette, category: 'design' },
+  { id: 'box-shadow-generator', name: 'Box Shadow', icon: Eye, category: 'design' },
+  { id: 'text-case-converter', name: 'Text Case', icon: Type, category: 'text' },
+  { id: 'qr-code-generator', name: 'QR Code', icon: QrCode, category: 'generators' },
+  { id: 'csv-converter', name: 'CSV Converter', icon: FileText, category: 'converters' },
+  { id: 'markdown-converter', name: 'Markdown Converter', icon: FileText, category: 'converters' },
 ];
 
 const categories = {
   featured: 'Featured',
   converters: 'Data Converters',
   validation: 'Validation & Debug',
-  generators: 'Generators'
+  generators: 'Generators',
+  network: 'API & Network',
+  design: 'CSS & Design',
+  text: 'Text Processing'
 };
 
 interface SidebarProps {

@@ -10,6 +10,15 @@ import { TextDiff } from '@/components/tools/TextDiff';
 import { UUIDGenerator } from '@/components/tools/UUIDGenerator';
 import { HashGenerator } from '@/components/tools/HashGenerator';
 import { LoremGenerator } from '@/components/tools/LoremGenerator';
+import { PasswordGenerator } from '@/components/tools/PasswordGenerator';
+import { HTTPClient } from '@/components/tools/HTTPClient';
+import { CSSGridGenerator } from '@/components/tools/CSSGridGenerator';
+import { ColorPaletteGenerator } from '@/components/tools/ColorPaletteGenerator';
+import { BoxShadowGenerator } from '@/components/tools/BoxShadowGenerator';
+import { TextCaseConverter } from '@/components/tools/TextCaseConverter';
+import { QRCodeGenerator } from '@/components/tools/QRCodeGenerator';
+import { CSVConverter } from '@/components/tools/CSVConverter';
+import { MarkdownConverter } from '@/components/tools/MarkdownConverter';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 
@@ -63,6 +72,51 @@ const tools = {
     name: 'Lorem Ipsum Generator',
     description: 'Generate placeholder text',
     component: LoremGenerator,
+  },
+  'password-generator': {
+    name: 'Password Generator',
+    description: 'Generate secure passwords with customizable options',
+    component: PasswordGenerator,
+  },
+  'http-client': {
+    name: 'HTTP Client',
+    description: 'Send HTTP requests and test APIs',
+    component: HTTPClient,
+  },
+  'css-grid-generator': {
+    name: 'CSS Grid Generator',
+    description: 'Create CSS Grid layouts with visual editor',
+    component: CSSGridGenerator,
+  },
+  'color-palette': {
+    name: 'Color Palette Generator',
+    description: 'Generate harmonious color schemes',
+    component: ColorPaletteGenerator,
+  },
+  'box-shadow-generator': {
+    name: 'Box Shadow Generator',
+    description: 'Create CSS box shadows with visual editor',
+    component: BoxShadowGenerator,
+  },
+  'text-case-converter': {
+    name: 'Text Case Converter',
+    description: 'Convert text between different cases',
+    component: TextCaseConverter,
+  },
+  'qr-code-generator': {
+    name: 'QR Code Generator',
+    description: 'Generate QR codes for various content types',
+    component: QRCodeGenerator,
+  },
+  'csv-converter': {
+    name: 'CSV Converter',
+    description: 'Convert CSV data to JSON, XML, YAML, or SQL',
+    component: CSVConverter,
+  },
+  'markdown-converter': {
+    name: 'Markdown Converter',
+    description: 'Convert Markdown to HTML with live preview',
+    component: MarkdownConverter,
   },
 };
 

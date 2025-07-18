@@ -1,0 +1,430 @@
+API & Network Tools
+HTTP Client & API Testing
+
+HTTP Request Builder: Tạo và gửi HTTP requests với custom headers, body, authentication
+
+Support GET, POST, PUT, DELETE, PATCH methods
+Request history và favorites
+Environment variables cho API endpoints
+Response viewer với syntax highlighting
+
+
+API Mock Server: Tạo mock API endpoints cho testing
+
+Quick setup với custom responses
+Delay simulation và error responses
+CORS configuration
+Request logging và analytics
+
+
+cURL Command Generator: Convert API requests sang cURL commands
+
+Copy-paste từ browser network tab
+Generate từ form inputs
+Support authentication headers
+
+
+HTTP Status Code Reference: Tra cứu ý nghĩa HTTP status codes
+
+Chi tiết explanation cho từng code
+Best practices cho việc handle responses
+
+
+
+Network Debugging
+
+User Agent Inspector: Hiển thị và edit user agent strings
+
+Common user agents library
+Custom user agent generator
+Browser detection testing
+
+
+HTTP Headers Analyzer: Phân tích và edit HTTP headers
+
+Security headers checker
+Cache headers validator
+CORS headers debugger
+
+
+
+CSS & Design Tools
+CSS Generators
+
+CSS Grid Generator: Visual grid layout builder
+
+Drag-and-drop interface
+Responsive breakpoints
+Auto-generate grid areas
+
+
+Flexbox Generator: Visual flexbox layout creator
+
+Interactive playground
+Common patterns library
+Responsive flex settings
+
+
+CSS Animation Generator: Tạo CSS animations và transitions
+
+Keyframes editor
+Easing functions preview
+Animation timeline
+
+
+Box Shadow Generator: Tạo multiple layered shadows
+
+Real-time preview
+Inset/outset options
+Shadow stacking
+
+
+Border Radius Generator: Tạo complex border shapes
+
+Per-corner control
+Elliptical borders
+Polygon shapes
+
+
+CSS Filter Generator: Image filters và effects
+
+Blur, brightness, contrast, saturation
+Multiple filter combinations
+Live image preview
+
+
+
+Color Tools
+
+Color Palette Generator: Tạo color schemes
+
+Complementary, triadic, analogous palettes
+Color harmony rules
+Export formats (CSS, SCSS, JSON)
+
+
+Gradient Generator: CSS gradient creator
+
+Linear và radial gradients
+Multiple color stops
+Gradient presets library
+
+
+Color Contrast Checker: WCAG accessibility compliance
+
+AA/AAA level checking
+Color blindness simulation
+Suggest accessible alternatives
+
+
+CSS Color Format Converter: Convert giữa các format
+
+HEX ↔ RGB ↔ HSL ↔ RGBA ↔ HSLA
+Color name lookup
+Opacity calculator
+
+
+
+Text Processing & Manipulation
+Advanced Text Tools
+
+Text Diff Viewer: Compare text với highlighting
+
+Side-by-side và inline modes
+Word-level và character-level diffs
+Ignore whitespace options
+
+
+Markdown to HTML Converter: Real-time conversion
+
+Live preview
+Custom CSS styling
+Export options
+
+
+Text Statistics Analyzer: Chi tiết text analysis
+
+Reading time calculator
+Readability scores
+Keyword density
+Sentence complexity
+
+
+Lorem Ipsum Advanced Generator: Customizable placeholder text
+
+Different languages
+Custom word lists
+Paragraph/sentence/word count control
+
+
+Text Case Converter: Multiple case transformations
+
+camelCase, PascalCase, snake_case, kebab-case
+UPPER, lower, Title Case, sPoNgEbOb CaSe
+Custom delimiters
+
+
+Text Encoder/Decoder Suite: Multiple encoding methods
+
+HTML entities, XML entities
+Percent encoding, ASCII/Unicode
+Binary, Octal, Hexadecimal
+
+
+
+RegEx Tools
+
+RegEx Tester: Advanced pattern testing
+
+Real-time matching highlights
+Capture groups display
+Common patterns library
+Multi-line support
+
+
+RegEx Generator: AI-powered pattern creation
+
+Natural language to regex
+Common use cases (email, phone, etc.)
+Pattern explanation
+
+
+
+Data Processing & Conversion
+File Format Converters
+
+CSV Tools Suite:
+
+CSV to JSON/XML/YAML converter
+CSV validator với schema checking
+Column mapper và data transformer
+Duplicate row detector
+
+
+SQL Formatter: Format và beautify SQL queries
+
+Multiple SQL dialects
+Syntax highlighting
+Query optimization suggestions
+
+
+XML/HTML Tools:
+
+XML validator và formatter
+HTML minifier/beautifier
+Tag stripper và extractor
+XPATH tester
+
+
+Image Format Converter: Convert giữa formats
+
+JPEG ↔ PNG ↔ WebP ↔ SVG
+Quality/compression settings
+Batch processing support
+
+
+
+Data Generators
+
+Test Data Generator: Realistic fake data
+
+Names, addresses, emails, phones
+Credit cards, SSNs, dates
+Custom data schemas
+Export formats (JSON, CSV, SQL)
+
+
+QR Code Generator: Customizable QR codes
+
+Text, URLs, WiFi credentials
+Custom colors và logos
+Error correction levels
+Batch generation
+
+
+Barcode Generator: Multiple barcode formats
+
+UPC, EAN, Code 128, Code 39
+Custom dimensions
+Download formats
+
+
+
+Security & Encryption Tools
+Hashing & Encryption
+
+Password Generator: Secure password creation
+
+Customizable character sets
+Pronounceable passwords
+Strength meter
+Multiple passwords generation
+
+
+Password Strength Checker: Analyze password security
+
+Entropy calculation
+Common password checking
+Improvement suggestions
+
+
+Encryption/Decryption Tools:
+
+AES, DES, 3DES encryption
+RSA key pair generator
+Text encryption/decryption
+File encryption support
+
+
+
+SSL/TLS Tools
+
+SSL Certificate Checker: Validate certificates
+
+Expiry date checking
+Chain validation
+Security grade rating
+
+
+SSL Certificate Decoder: Parse certificate details
+
+Subject/Issuer information
+Key size và algorithm
+Extensions analysis
+
+
+
+Performance & SEO Tools
+Performance Testing
+
+Website Speed Tester: Page load performance
+
+Core Web Vitals metrics
+Resource loading timeline
+Optimization suggestions
+
+
+Image Optimizer: Compress images
+
+Lossless/lossy compression
+Format conversion
+Bulk processing
+
+
+
+SEO Tools
+
+Meta Tag Generator: HTML meta tags
+
+Open Graph tags
+Twitter Card tags
+Schema.org markup
+
+
+Robots.txt Generator: Create robots.txt files
+
+Common patterns
+Sitemap references
+Validation
+
+
+Sitemap Generator: XML sitemap creation
+
+URL crawler
+Priority và frequency settings
+Validation
+
+
+
+Development Utilities
+Code Quality
+
+Code Formatter: Multi-language support
+
+JavaScript, Python, Java, C++
+Custom formatting rules
+Syntax highlighting
+
+
+Code Minifier: Optimize code size
+
+JavaScript/CSS/HTML minification
+Variable name obfuscation
+Comments removal
+
+
+License Generator: Open source licenses
+
+Common licenses (MIT, GPL, Apache)
+Custom license creation
+Year và name placeholder
+
+
+
+Database Tools
+
+SQL Query Builder: Visual query constructor
+
+Drag-and-drop tables
+Join relationships
+Query optimization
+
+
+Database Schema Viewer: ERD visualization
+
+Import from SQL dumps
+Relationship mapping
+Export diagrams
+
+
+
+Miscellaneous Tools
+Web Scraping & Analysis
+
+Website Analyzer: Technical analysis
+
+Technology stack detection
+SEO audit
+Security headers check
+Performance metrics
+
+
+Link Checker: Validate URLs
+
+Broken link detection
+Redirect chain analysis
+Response time measurement
+
+
+
+Browser Tools
+
+Browser Compatibility Checker: Feature support
+
+CSS property support
+JavaScript API availability
+Polyfill suggestions
+
+
+Viewport Size Tester: Responsive design testing
+
+Common device resolutions
+Custom viewport sizes
+Screenshot capture
+
+
+
+Time & Date Tools
+
+World Clock: Multiple timezone display
+
+Meeting time planner
+Timezone converter
+Daylight saving awareness
+
+
+Date Calculator: Date arithmetic
+
+Add/subtract days/months/years
+Business days calculator
+Age calculator
