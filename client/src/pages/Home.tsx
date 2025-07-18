@@ -25,9 +25,9 @@ import {
 } from 'lucide-react';
 
 const quickTools = [
-  { id: 'json-formatter', name: 'JSON Formatter', icon: Code, description: 'Format, validate, and minify JSON data' },
-  { id: 'base64-tool', name: 'Base64 Encoder', icon: Key, description: 'Encode and decode Base64 strings' },
-  { id: 'uuid-generator', name: 'UUID Generator', icon: Fingerprint, description: 'Generate unique identifiers (v1, v4, v5)' },
+  { id: 'json-formatter', name: 'JSON Formatter', icon: Code, description: 'Format, validate, and minify JSON data', color: 'text-blue-500' },
+  { id: 'base64-tool', name: 'Base64 Encoder', icon: Key, description: 'Encode and decode Base64 strings', color: 'text-green-500' },
+  { id: 'uuid-generator', name: 'UUID Generator', icon: Fingerprint, description: 'Generate unique identifiers (v1, v4, v5)', color: 'text-purple-500' },
 ];
 
 export function Home() {
@@ -136,7 +136,7 @@ export function Home() {
                         whileHover={{ rotate: 360 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <Icon className="w-5 h-5 text-primary" />
+                        <Icon className={`w-5 h-5 ${tool.color}`} />
                       </motion.div>
                       <span>{tool.name}</span>
                     </CardTitle>

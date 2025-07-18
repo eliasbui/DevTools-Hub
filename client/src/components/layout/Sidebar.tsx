@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Wand2, 
   Code, 
@@ -108,6 +109,20 @@ const categories = {
   file: 'File Tools'
 };
 
+// Color scheme for categories
+const categoryColors = {
+  featured: 'text-purple-500 dark:text-purple-400',
+  converters: 'text-blue-500 dark:text-blue-400',
+  validation: 'text-green-500 dark:text-green-400',
+  generators: 'text-pink-500 dark:text-pink-400',
+  network: 'text-orange-500 dark:text-orange-400',
+  design: 'text-indigo-500 dark:text-indigo-400',
+  text: 'text-teal-500 dark:text-teal-400',
+  database: 'text-yellow-500 dark:text-yellow-400',
+  security: 'text-red-500 dark:text-red-400',
+  file: 'text-cyan-500 dark:text-cyan-400'
+};
+
 interface SidebarProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
@@ -128,7 +143,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   }, {} as Record<string, typeof tools>);
 
   return (
-    <>
+    <TooltipProvider>
       {/* Mobile backdrop */}
       <AnimatePresence>
         {isOpen && (
@@ -228,25 +243,36 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <Link href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
-                            <Button
-                              variant={isActive ? 'default' : 'ghost'}
-                              className={`w-full justify-start smooth-transition ${
-                                isActive 
-                                  ? 'bg-primary text-primary-foreground' 
-                                  : 'text-foreground hover:bg-accent'
-                              }`}
-                              onClick={() => setIsOpen(false)}
-                            >
-                              <motion.div
-                                whileHover={{ rotate: 360 }}
-                                transition={{ duration: 0.5 }}
-                              >
-                                <Icon className="w-4 h-4 mr-2" />
-                              </motion.div>
-                              {tool.name}
-                            </Button>
-                          </Link>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
+                                <Button
+                                  variant={isActive ? 'default' : 'ghost'}
+                                  className={`w-full justify-start smooth-transition card-hover ${
+                                    isActive 
+                                      ? 'gradient-primary text-white shadow-lg' 
+                                      : 'text-foreground hover:bg-accent/50'
+                                  }`}
+                                  onClick={() => setIsOpen(false)}
+                                >
+                                  <motion.div
+                                    whileHover={{ rotate: 360 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="flex items-center justify-center"
+                                  >
+                                    <Icon className={`w-4 h-4 mr-2 icon-bounce ${
+                                      isActive ? 'text-white' : categoryColors[key as keyof typeof categoryColors]
+                                    }`} />
+                                  </motion.div>
+                                  <span className={isActive ? 'font-semibold' : ''}>{tool.name}</span>
+                                </Button>
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" className="notification-pop">
+                              <p className="font-medium">{tool.name}</p>
+                              <p className="text-xs text-muted-foreground">Click to use this tool</p>
+                            </TooltipContent>
+                          </Tooltip>
                         </motion.div>
                       );
                     })}
@@ -303,6 +329,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           </motion.div>
         </div>
       </motion.div>
-    </>
+    </TooltipProvider>
   );
 }

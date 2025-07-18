@@ -8,20 +8,29 @@ import { detectDataType } from '@/utils/dataDetection';
 import { DetectedData } from '@/types/tools';
 import { Wand2, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Spinner } from '@/components/ui/spinner';
 
 export function SmartPaste() {
   const [input, setInput] = useState('');
   const [detected, setDetected] = useState<DetectedData | null>(null);
   const [output, setOutput] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (input.trim()) {
-      const detection = detectDataType(input);
-      setDetected(detection);
-      setOutput(detection.formatted || JSON.stringify(detection.data, null, 2));
+      setIsProcessing(true);
+      // Simulate processing delay for visual effect
+      const timer = setTimeout(() => {
+        const detection = detectDataType(input);
+        setDetected(detection);
+        setOutput(detection.formatted || JSON.stringify(detection.data, null, 2));
+        setIsProcessing(false);
+      }, 200);
+      return () => clearTimeout(timer);
     } else {
       setDetected(null);
       setOutput('');
+      setIsProcessing(false);
     }
   }, [input]);
 
@@ -93,16 +102,16 @@ export function SmartPaste() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <Card className="mb-6">
+      <Card className="mb-6 card-hover">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <motion.div
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.5 }}
             >
-              <Wand2 className="w-5 h-5 text-primary" />
+              <Wand2 className="w-5 h-5 text-purple-500 dark:text-purple-400" />
             </motion.div>
-            <span>Smart Paste</span>
+            <span className="gradient-text">Smart Paste</span>
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Auto-detects: JSON, Base64, JWT, URLs, Timestamps, Colors, XML, YAML
