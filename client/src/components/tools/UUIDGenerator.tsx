@@ -93,6 +93,38 @@ export function UUIDGenerator() {
           </div>
         </div>
       </CardContent>
+      
+      {/* Description Section */}
+      <div className="border-t p-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h3 className="text-lg font-semibold">About UUID Generator</h3>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              Generate Universally Unique Identifiers (UUIDs) for your applications. UUIDs are 128-bit numbers used to uniquely identify information in computer systems without requiring a central authority.
+            </p>
+            <p>
+              <strong>UUID Versions:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><strong>UUID v1:</strong> Time-based, includes timestamp and MAC address. Good for distributed systems where ordering matters</li>
+              <li><strong>UUID v4:</strong> Random generation, most commonly used. Provides 122 bits of randomness</li>
+            </ul>
+            <p>
+              <strong>Common Use Cases:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Database primary keys without auto-increment</li>
+              <li>Tracking unique sessions or transactions</li>
+              <li>File naming to avoid collisions</li>
+              <li>API tokens and temporary identifiers</li>
+              <li>Distributed system entity identification</li>
+            </ul>
+            <p className="text-xs">
+              <strong>Note:</strong> UUID v4 is recommended for most use cases as it doesn't expose system information like MAC addresses. The probability of generating duplicate UUID v4s is negligible.
+            </p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

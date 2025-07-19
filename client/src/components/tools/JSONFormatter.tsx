@@ -173,6 +173,40 @@ export function JSONFormatter() {
           </div>
         </div>
       </CardContent>
+      
+      {/* Description Section */}
+      <div className="border-t p-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h3 className="text-lg font-semibold">About JSON Formatter</h3>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              A powerful tool for formatting, minifying, and validating JSON data. Perfect for developers working with APIs, configuration files, or any JSON-based data.
+            </p>
+            <p>
+              <strong>Features:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><strong>Format:</strong> Beautify JSON with proper indentation and line breaks</li>
+              <li><strong>Minify:</strong> Remove all whitespace to create compact JSON</li>
+              <li><strong>Validate:</strong> Check if your JSON is valid with detailed error messages</li>
+              <li><strong>Real-time validation:</strong> See instant feedback as you type</li>
+              <li><strong>Copy to clipboard:</strong> Easily copy formatted output</li>
+            </ul>
+            <p>
+              <strong>Common Use Cases:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Clean up messy JSON from API responses</li>
+              <li>Validate JSON before using in applications</li>
+              <li>Minify JSON for reduced file size</li>
+              <li>Debug JSON parsing errors</li>
+            </ul>
+            <p className="text-xs">
+              <strong>Tip:</strong> Use the validate feature to identify syntax errors quickly. The tool will show you exactly where the error is located.
+            </p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

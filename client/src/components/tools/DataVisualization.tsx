@@ -1079,6 +1079,42 @@ export function DataVisualization() {
           )}
         </div>
       </CardContent>
+      
+      {/* Description Section */}
+      <div className="border-t p-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h3 className="text-lg font-semibold">About Data Visualizer</h3>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              <strong>Supported Formats:</strong> JSON, XML, YAML, and CSV. The tool automatically detects the format when you paste data.
+            </p>
+            <p>
+              <strong>Interactive Features:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Click on parent nodes (objects/arrays) to expand or collapse them</li>
+              <li>Click on any node to view its details in the sidebar</li>
+              <li>Copy node values directly from the details panel</li>
+              <li>Use mouse wheel or zoom buttons to adjust the view</li>
+              <li>Export visualizations as PNG or SVG images</li>
+            </ul>
+            <p>
+              <strong>Keyboard Shortcuts:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><kbd>Cmd/Ctrl + V</kbd> - Focus input area for pasting</li>
+              <li><kbd>Cmd/Ctrl + Enter</kbd> - Visualize the current data</li>
+              <li><kbd>Escape</kbd> - Clear node selection</li>
+            </ul>
+            <p>
+              <strong>View Modes:</strong> Choose between Tree View (hierarchical layout) and Graph View (force-directed layout) based on your preference.
+            </p>
+            <p className="text-xs">
+              <strong>Note:</strong> Large datasets may take longer to render. For best performance, keep data under 1000 nodes.
+            </p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

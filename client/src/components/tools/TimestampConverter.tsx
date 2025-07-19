@@ -126,6 +126,40 @@ export function TimestampConverter() {
           </div>
         </div>
       </CardContent>
+      
+      {/* Description Section */}
+      <div className="border-t p-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h3 className="text-lg font-semibold">About Timestamp Converter</h3>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              Convert between Unix timestamps and human-readable dates. Unix timestamps represent the number of seconds (or milliseconds) since January 1, 1970 UTC.
+            </p>
+            <p>
+              <strong>Features:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Convert Unix timestamps to formatted dates</li>
+              <li>Convert dates to Unix timestamps</li>
+              <li>Support for both seconds and milliseconds timestamps</li>
+              <li>Timezone support (UTC, EST, PST, GMT)</li>
+              <li>Current timestamp display</li>
+            </ul>
+            <p>
+              <strong>Common Use Cases:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Debug timestamps from logs or databases</li>
+              <li>Convert API response timestamps</li>
+              <li>Generate timestamps for testing</li>
+              <li>Work with different timezone conversions</li>
+            </ul>
+            <p className="text-xs">
+              <strong>Tip:</strong> Unix timestamps in seconds have 10 digits (e.g., 1672531200), while milliseconds have 13 digits (e.g., 1672531200000).
+            </p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

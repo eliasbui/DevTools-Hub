@@ -145,6 +145,41 @@ export function RegexTester() {
           )}
         </div>
       </CardContent>
+      
+      {/* Description Section */}
+      <div className="border-t p-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h3 className="text-lg font-semibold">About Regex Tester</h3>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              Test and debug regular expressions (regex) in real-time. This tool helps you build, test, and understand regex patterns for text matching and extraction.
+            </p>
+            <p>
+              <strong>Features:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Real-time pattern validation</li>
+              <li>Highlight all matches in your test string</li>
+              <li>Display captured groups for each match</li>
+              <li>Show match positions and lengths</li>
+              <li>Support for all JavaScript regex flags (g, i, m, s, u, y)</li>
+            </ul>
+            <p>
+              <strong>Common Regex Patterns:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><code>\d+</code> - Match one or more digits</li>
+              <li><code>[a-zA-Z]+</code> - Match one or more letters</li>
+              <li><code>\w+@\w+\.\w+</code> - Simple email pattern</li>
+              <li><code>https?://[^\s]+</code> - Match URLs</li>
+              <li><code>\b\w+\b</code> - Match whole words</li>
+            </ul>
+            <p className="text-xs">
+              <strong>Tip:</strong> Use the 'g' flag to find all matches, not just the first one. The 'i' flag makes matching case-insensitive.
+            </p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

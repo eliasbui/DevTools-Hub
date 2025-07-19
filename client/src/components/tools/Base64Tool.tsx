@@ -136,6 +136,40 @@ export function Base64Tool({ toolId = 'base64-tool', toolName = 'Base64 Encoder/
           </div>
         </div>
       </CardContent>
+      
+      {/* Description Section */}
+      <div className="border-t p-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h3 className="text-lg font-semibold">About Base64 Encoder/Decoder</h3>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              Base64 is a binary-to-text encoding scheme that represents binary data in ASCII string format. It's commonly used for encoding data in URLs, emails, and web applications.
+            </p>
+            <p>
+              <strong>Common Use Cases:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Encoding binary data (images, files) for transmission over text-based protocols</li>
+              <li>Embedding images directly in HTML/CSS using data URLs</li>
+              <li>Encoding credentials for basic authentication headers</li>
+              <li>Storing complex data in URL parameters</li>
+              <li>Encoding data for JSON/XML payloads</li>
+            </ul>
+            <p>
+              <strong>Features:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><strong>Encode:</strong> Convert plain text or binary data to Base64 format</li>
+              <li><strong>Decode:</strong> Convert Base64 encoded strings back to original text</li>
+              <li><strong>URL-safe option:</strong> Use URL-safe Base64 encoding for web applications</li>
+              <li><strong>Auto-save:</strong> Your input is automatically saved for later use</li>
+            </ul>
+            <p className="text-xs">
+              <strong>Note:</strong> Base64 encoding increases data size by approximately 33%. It's not encryption and should not be used for security purposes.
+            </p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

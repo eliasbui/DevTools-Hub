@@ -121,6 +121,40 @@ export function HashGenerator() {
           </div>
         </div>
       </CardContent>
+      
+      {/* Description Section */}
+      <div className="border-t p-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <h3 className="text-lg font-semibold">About Hash Generator</h3>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              Generate cryptographic hash values from text input. Hashing is a one-way function that converts data into a fixed-length string of characters, commonly used for data integrity verification and password storage.
+            </p>
+            <p>
+              <strong>Available Algorithms:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><strong>MD5 (128-bit):</strong> Fast but outdated, suitable only for checksums, not security</li>
+              <li><strong>SHA-1 (160-bit):</strong> Deprecated for security, still used in legacy systems</li>
+              <li><strong>SHA-256 (256-bit):</strong> Current standard for most security applications</li>
+              <li><strong>SHA-512 (512-bit):</strong> Maximum security, used for highly sensitive data</li>
+            </ul>
+            <p>
+              <strong>Common Use Cases:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Verify file integrity with checksums</li>
+              <li>Create unique identifiers for data</li>
+              <li>Store passwords securely (with salt)</li>
+              <li>Generate digital signatures</li>
+              <li>Detect duplicate content</li>
+            </ul>
+            <p className="text-xs">
+              <strong>Security Note:</strong> For password hashing, always use specialized algorithms like bcrypt, scrypt, or Argon2 instead of general-purpose hash functions.
+            </p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }
