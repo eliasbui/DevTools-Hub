@@ -1024,7 +1024,7 @@ export function DataVisualization() {
 
         {/* Right Panel - Visualization */}
         <div className="flex-1 relative border rounded-lg bg-gray-50 dark:bg-gray-900">
-          <div className="absolute top-2 right-2 z-10 flex gap-2">
+          <div className="absolute top-2 right-12 z-20 flex gap-2">
             <Button
               variant="outline"
               size="icon"
