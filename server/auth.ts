@@ -90,6 +90,10 @@ export async function setupMultiAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
   
+  // Setup Replit authentication
+  const { setupReplitAuth } = await import('./replitAuth');
+  await setupReplitAuth(app);
+  
   // Google OAuth routes
   app.get('/api/auth/google', 
     passport.authenticate('google', { scope: ['profile', 'email'] })
