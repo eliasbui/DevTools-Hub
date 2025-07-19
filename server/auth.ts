@@ -4,9 +4,12 @@ import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
 import { storage } from "./storage";
 import type { Express, RequestHandler } from "express";
-import { getSession } from "./replitAuth";
+import { getSession, isAuthenticated as isReplitAuth } from "./replitAuth";
 import { randomBytes } from "crypto";
 import nodemailer from "nodemailer";
+import * as client from "openid-client";
+import { Strategy as OidcStrategy, type VerifyFunction } from "openid-client/passport";
+import memoize from "memoizee";
 
 // Google OAuth Strategy
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
@@ -57,7 +60,7 @@ passport.use(new LocalStrategy({
   }
 }));
 
-// Serialize/Deserialize user
+// Serialize/Deserialize user - handle both Replit and other auth methods
 passport.serializeUser((user: any, done) => {
   done(null, user);
 });
@@ -85,10 +88,97 @@ const createEmailTransporter = () => {
   });
 };
 
+// Helper functions for Replit auth
+const getOidcConfig = memoize(
+  async () => {
+    return await client.discovery(
+      new URL(process.env.ISSUER_URL ?? "https://replit.com/oidc"),
+      process.env.REPL_ID!
+    );
+  },
+  { maxAge: 3600 * 1000 }
+);
+
+function updateUserSession(
+  user: any,
+  tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers
+) {
+  user.claims = tokens.claims();
+  user.access_token = tokens.access_token;
+  user.refresh_token = tokens.refresh_token;
+  user.expires_at = user.claims?.exp;
+}
+
+async function upsertReplitUser(claims: any) {
+  await storage.upsertUser({
+    id: claims["sub"],
+    email: claims["email"],
+    firstName: claims["first_name"],
+    lastName: claims["last_name"],
+    profileImageUrl: claims["profile_image_url"],
+    provider: 'replit'
+  });
+}
+
 export async function setupMultiAuth(app: Express) {
+  app.set("trust proxy", 1);
   app.use(getSession());
   app.use(passport.initialize());
   app.use(passport.session());
+  
+  // Setup Replit authentication strategies
+  if (process.env.REPLIT_DOMAINS) {
+    const config = await getOidcConfig();
+    
+    const verify: VerifyFunction = async (
+      tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
+      verified: passport.AuthenticateCallback
+    ) => {
+      const user = {};
+      updateUserSession(user, tokens);
+      await upsertReplitUser(tokens.claims());
+      verified(null, user);
+    };
+    
+    for (const domain of process.env.REPLIT_DOMAINS.split(",")) {
+      const strategy = new OidcStrategy(
+        {
+          name: `replitauth:${domain}`,
+          config,
+          scope: "openid email profile offline_access",
+          callbackURL: `https://${domain}/api/callback`,
+        },
+        verify,
+      );
+      passport.use(strategy);
+    }
+    
+    // Replit auth routes
+    app.get("/api/login", (req, res, next) => {
+      passport.authenticate(`replitauth:${req.hostname}`, {
+        prompt: "login consent",
+        scope: ["openid", "email", "profile", "offline_access"],
+      })(req, res, next);
+    });
+    
+    app.get("/api/callback", (req, res, next) => {
+      passport.authenticate(`replitauth:${req.hostname}`, {
+        successReturnToOrRedirect: "/",
+        failureRedirect: "/api/login",
+      })(req, res, next);
+    });
+    
+    app.get("/api/logout", (req, res) => {
+      req.logout(() => {
+        res.redirect(
+          client.buildEndSessionUrl(config, {
+            client_id: process.env.REPL_ID!,
+            post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
+          }).href
+        );
+      });
+    });
+  }
   
   // Google OAuth routes
   app.get('/api/auth/google', 
@@ -228,9 +318,30 @@ export async function setupMultiAuth(app: Express) {
   });
 }
 
-export const isAuthenticated: RequestHandler = (req, res, next) => {
+export const isAuthenticated: RequestHandler = async (req, res, next) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+  
+  // Check if this is a Replit auth user and handle token refresh
+  const user = req.user as any;
+  if (user && user.expires_at) {
+    const now = Math.floor(Date.now() / 1000);
+    if (now > user.expires_at) {
+      const refreshToken = user.refresh_token;
+      if (!refreshToken) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      try {
+        const config = await getOidcConfig();
+        const tokenResponse = await client.refreshTokenGrant(config, refreshToken);
+        updateUserSession(user, tokenResponse);
+      } catch (error) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+    }
+  }
+  
   next();
 };
