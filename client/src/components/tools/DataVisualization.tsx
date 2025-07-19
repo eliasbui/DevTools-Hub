@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 import { 
   Download, 
   Upload, 
@@ -14,284 +15,105 @@ import {
   RefreshCw,
   Search,
   Copy,
-  Share2,
   Code,
   FileImage,
+  Eye,
+  GitBranch,
+  Minimize2,
+  Network,
+  TreePine,
+  Shuffle,
+  ChevronRight,
+  ChevronDown,
   FileJson,
-  Eye
+  FileText,
+  Database,
+  Braces
 } from 'lucide-react';
-import cytoscape from 'cytoscape';
-import cola from 'cytoscape-cola';
-import dagre from 'cytoscape-dagre';
-import fcose from 'cytoscape-fcose';
+import * as d3 from 'd3';
+import { saveAs } from 'file-saver';
 
-// Register layouts
-cytoscape.use(cola);
-cytoscape.use(dagre);
-cytoscape.use(fcose);
-
-interface DetectedFormat {
-  format: 'json' | 'xml' | 'yaml' | 'csv' | 'text' | 'unknown';
-  confidence: number;
-  error?: string;
+interface TreeNode {
+  id: string;
+  name: string;
+  value?: any;
+  type: 'object' | 'array' | 'string' | 'number' | 'boolean' | 'null';
+  children?: TreeNode[];
+  parent?: TreeNode | null;
+  depth?: number;
+  x?: number;
+  y?: number;
+  collapsed?: boolean;
 }
 
 export function DataVisualization() {
   const [input, setInput] = useState('');
-  const [detectedFormat, setDetectedFormat] = useState<DetectedFormat>({ format: 'unknown', confidence: 0 });
-  const [selectedLayout, setSelectedLayout] = useState('fcose');
+  const [viewMode, setViewMode] = useState<'tree' | 'graph'>('tree');
   const [searchQuery, setSearchQuery] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [graphData, setGraphData] = useState<any>(null);
+  const [treeData, setTreeData] = useState<TreeNode | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [nodeCount, setNodeCount] = useState(0);
   const { toast } = useToast();
   
+  const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const cyRef = useRef<cytoscape.Core | null>(null);
+  const gRef = useRef<SVGGElement>(null);
 
-  // Auto-detect format
-  const detectFormat = useCallback((content: string): DetectedFormat => {
-    const trimmed = content.trim();
+  // Example JSON
+  const exampleJson = {
+    "name": "John Doe",
+    "age": 30,
+    "active": true,
+    "skills": ["JavaScript", "React", "Node.js"],
+    "address": {
+      "street": "123 Main St",
+      "city": "San Francisco",
+      "country": "USA"
+    },
+    "projects": [
+      {
+        "name": "JsonCrack Clone",
+        "status": "in-progress",
+        "technologies": ["React", "D3.js"]
+      }
+    ]
+  };
+
+  // Convert JSON to tree structure
+  const jsonToTree = (data: any, name: string = 'root', parent: TreeNode | null = null): TreeNode => {
+    const id = Math.random().toString(36).substr(2, 9);
+    const type = Array.isArray(data) ? 'array' : data === null ? 'null' : typeof data as any;
     
-    if (!trimmed) {
-      return { format: 'unknown', confidence: 0 };
-    }
-
-    // JSON detection
-    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || 
-        (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
-      try {
-        JSON.parse(trimmed);
-        return { format: 'json', confidence: 100 };
-      } catch (e) {
-        // Check if it's likely JSON with syntax errors
-        if (trimmed.includes('"') && (trimmed.includes(':') || trimmed.includes(','))) {
-          return { format: 'json', confidence: 60, error: 'Invalid JSON syntax' };
-        }
-      }
-    }
-
-    // XML detection
-    if (trimmed.includes('<?xml') || (trimmed.startsWith('<') && trimmed.endsWith('>'))) {
-      const xmlPattern = /<[^>]+>/g;
-      const matches = trimmed.match(xmlPattern);
-      if (matches && matches.length > 2) {
-        return { format: 'xml', confidence: 90 };
-      }
-    }
-
-    // YAML detection
-    if ((trimmed.includes('---') || trimmed.includes(':')) && 
-        !trimmed.includes('{') && 
-        /^\s*\w+:/m.test(trimmed)) {
-      return { format: 'yaml', confidence: 80 };
-    }
-
-    // CSV detection
-    const lines = trimmed.split('\n');
-    if (lines.length > 1) {
-      const firstLineCommas = (lines[0].match(/,/g) || []).length;
-      if (firstLineCommas > 0) {
-        const allLinesHaveCommas = lines.slice(0, Math.min(5, lines.length))
-          .every(line => (line.match(/,/g) || []).length === firstLineCommas);
-        if (allLinesHaveCommas) {
-          return { format: 'csv', confidence: 85 };
-        }
-      }
-    }
-
-    return { format: 'text', confidence: 50 };
-  }, []);
-
-  // Convert data to graph format
-  const dataToGraph = useCallback((data: any, format: string) => {
-    const nodes: any[] = [];
-    const edges: any[] = [];
-    let nodeId = 0;
-
-    const addNode = (id: string, label: string, type: string, value?: any) => {
-      nodes.push({
-        data: { 
-          id, 
-          label: label.length > 30 ? label.substring(0, 30) + '...' : label, 
-          type,
-          fullLabel: label,
-          value: value
-        }
-      });
+    const node: TreeNode = {
+      id,
+      name,
+      type,
+      parent,
+      children: []
     };
 
-    const addEdge = (source: string, target: string, label?: string) => {
-      edges.push({
-        data: { 
-          id: `e${edges.length}`, 
-          source, 
-          target, 
-          label: label || ''
-        }
-      });
-    };
-
-    const processObject = (obj: any, parentId?: string, key?: string) => {
-      const currentId = `n${nodeId++}`;
-      
-      if (obj === null || obj === undefined) {
-        addNode(currentId, key || 'null', 'null', null);
-      } else if (Array.isArray(obj)) {
-        addNode(currentId, key || 'Array', 'array', `[${obj.length}]`);
-        obj.forEach((item, index) => {
-          const childId = processObject(item, currentId, `[${index}]`);
-          addEdge(currentId, childId);
-        });
-      } else if (typeof obj === 'object') {
-        addNode(currentId, key || 'Object', 'object', `{${Object.keys(obj).length}}`);
-        Object.entries(obj).forEach(([k, v]) => {
-          const childId = processObject(v, currentId, k);
-          addEdge(currentId, childId, k);
-        });
-      } else {
-        const valueStr = String(obj);
-        addNode(currentId, key || valueStr, typeof obj, valueStr);
-      }
-      
-      if (parentId) {
-        return currentId;
-      }
-      
-      return currentId;
-    };
-
-    try {
-      if (format === 'json') {
-        const parsed = JSON.parse(data);
-        processObject(parsed);
-      } else if (format === 'csv') {
-        const lines = data.trim().split('\n');
-        const headers = lines[0].split(',').map(h => h.trim());
-        
-        const rootId = `n${nodeId++}`;
-        addNode(rootId, 'CSV Data', 'root', `${lines.length - 1} rows`);
-        
-        lines.slice(1).forEach((line, rowIndex) => {
-          const rowId = `n${nodeId++}`;
-          addNode(rowId, `Row ${rowIndex + 1}`, 'row');
-          addEdge(rootId, rowId);
-          
-          const values = line.split(',').map(v => v.trim());
-          headers.forEach((header, colIndex) => {
-            const cellId = `n${nodeId++}`;
-            addNode(cellId, values[colIndex] || '', 'value', values[colIndex]);
-            addEdge(rowId, cellId, header);
-          });
-        });
-      } else {
-        // For other formats, create a simple text node
-        const rootId = `n${nodeId++}`;
-        addNode(rootId, 'Text Data', 'text', data);
-      }
-      
-      return { nodes, edges };
-    } catch (error) {
-      throw new Error(`Failed to parse ${format} data: ${error.message}`);
-    }
-  }, []);
-
-  // Initialize Cytoscape
-  const initializeCytoscape = useCallback((elements: any) => {
-    if (!containerRef.current) return;
-
-    if (cyRef.current) {
-      cyRef.current.destroy();
+    if (type === 'object' && data !== null) {
+      node.children = Object.entries(data).map(([key, value]) => 
+        jsonToTree(value, key, node)
+      );
+    } else if (type === 'array') {
+      node.children = data.map((item: any, index: number) => 
+        jsonToTree(item, `[${index}]`, node)
+      );
+    } else {
+      node.value = data;
     }
 
-    cyRef.current = cytoscape({
-      container: containerRef.current,
-      elements: elements,
-      style: [
-        {
-          selector: 'node',
-          style: {
-            'background-color': (ele: any) => {
-              const type = ele.data('type');
-              switch (type) {
-                case 'object': return '#0079F2';
-                case 'array': return '#10B981';
-                case 'string': return '#F59E0B';
-                case 'number': return '#8B5CF6';
-                case 'boolean': return '#EF4444';
-                case 'null': return '#6B7280';
-                default: return '#64748B';
-              }
-            },
-            'label': 'data(label)',
-            'text-valign': 'center',
-            'text-halign': 'center',
-            'font-size': '12px',
-            'color': '#fff',
-            'text-outline-width': 2,
-            'text-outline-color': (ele: any) => {
-              const type = ele.data('type');
-              switch (type) {
-                case 'object': return '#0079F2';
-                case 'array': return '#10B981';
-                case 'string': return '#F59E0B';
-                case 'number': return '#8B5CF6';
-                case 'boolean': return '#EF4444';
-                case 'null': return '#6B7280';
-                default: return '#64748B';
-              }
-            },
-            'width': 40,
-            'height': 40
-          }
-        },
-        {
-          selector: 'edge',
-          style: {
-            'width': 2,
-            'line-color': '#94A3B8',
-            'target-arrow-color': '#94A3B8',
-            'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier',
-            'label': 'data(label)',
-            'font-size': '10px',
-            'text-rotation': 'autorotate',
-            'text-margin-y': -10
-          }
-        },
-        {
-          selector: ':selected',
-          style: {
-            'border-width': 3,
-            'border-color': '#0079F2'
-          }
-        }
-      ],
-      layout: {
-        name: selectedLayout,
-        animate: true,
-        animationDuration: 1000,
-        fit: true,
-        padding: 50
-      }
-    });
+    return node;
+  };
 
-    // Add event listeners
-    cyRef.current.on('tap', 'node', (evt: any) => {
-      const node = evt.target;
-      const data = node.data();
-      toast({
-        title: data.fullLabel || data.label,
-        description: `Type: ${data.type}, Value: ${data.value || 'N/A'}`
-      });
-    });
-
-  }, [selectedLayout, toast]);
-
-  // Process input data
-  const processData = useCallback(() => {
+  // Parse input
+  const parseInput = useCallback(() => {
     if (!input.trim()) {
       toast({
-        title: "No input",
+        title: "Empty Input",
         description: "Please enter some data to visualize",
         variant: "destructive"
       });
@@ -299,293 +121,458 @@ export function DataVisualization() {
     }
 
     setIsProcessing(true);
-    
     try {
-      const format = detectedFormat.format;
-      if (format === 'unknown' || format === 'text') {
-        toast({
-          title: "Unsupported format",
-          description: "Please enter valid JSON, XML, YAML, or CSV data",
-          variant: "destructive"
-        });
-        setIsProcessing(false);
-        return;
-      }
-
-      const graphData = dataToGraph(input, format);
-      setGraphData(graphData);
+      const data = JSON.parse(input);
+      const tree = jsonToTree(data);
+      setTreeData(tree);
       
-      const elements = [...graphData.nodes, ...graphData.edges];
-      initializeCytoscape(elements);
+      // Count nodes
+      let count = 0;
+      const countNodes = (node: TreeNode) => {
+        count++;
+        node.children?.forEach(countNodes);
+      };
+      countNodes(tree);
+      setNodeCount(count);
       
-    } catch (error) {
       toast({
-        title: "Processing error",
+        title: "Success",
+        description: `Visualized ${count} nodes`
+      });
+    } catch (error: any) {
+      toast({
+        title: "Parse Error",
         description: error.message,
         variant: "destructive"
       });
     } finally {
       setIsProcessing(false);
     }
-  }, [input, detectedFormat, dataToGraph, initializeCytoscape, toast]);
+  }, [input, toast]);
 
-  // Layout change
-  const changeLayout = (layout: string) => {
-    setSelectedLayout(layout);
-    if (cyRef.current) {
-      cyRef.current.layout({ 
-        name: layout, 
-        animate: true, 
-        animationDuration: 1000,
-        fit: true,
-        padding: 50
-      }).run();
+  // Get node color based on type
+  const getNodeColor = (type: string) => {
+    switch (type) {
+      case 'object': return '#0ea5e9'; // sky-500
+      case 'array': return '#10b981'; // emerald-500
+      case 'string': return '#f59e0b'; // amber-500
+      case 'number': return '#8b5cf6'; // violet-500
+      case 'boolean': return '#ef4444'; // red-500
+      case 'null': return '#6b7280'; // gray-500
+      default: return '#64748b'; // slate-500
     }
   };
 
-  // Zoom controls
-  const handleZoom = (direction: 'in' | 'out' | 'fit') => {
-    if (!cyRef.current) return;
-    
-    if (direction === 'in') {
-      cyRef.current.zoom(cyRef.current.zoom() * 1.2);
-    } else if (direction === 'out') {
-      cyRef.current.zoom(cyRef.current.zoom() * 0.8);
-    } else {
-      cyRef.current.fit();
-    }
-  };
-
-  // Search functionality
-  const handleSearch = () => {
-    if (!cyRef.current || !searchQuery) return;
-
-    cyRef.current.elements().removeClass('highlighted');
-    
-    if (searchQuery) {
-      cyRef.current.nodes().forEach((node: any) => {
-        const label = node.data('fullLabel') || node.data('label');
-        if (label.toLowerCase().includes(searchQuery.toLowerCase())) {
-          node.addClass('highlighted');
-        }
-      });
-    }
-  };
-
-  // Export functionality
-  const exportGraph = (format: 'png' | 'json' | 'svg') => {
-    if (!cyRef.current) return;
-
-    if (format === 'png') {
-      const png = cyRef.current.png({ 
-        output: 'blob',
-        bg: 'white',
-        scale: 2
-      });
-      
-      const url = URL.createObjectURL(png);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'graph-visualization.png';
-      a.click();
-      URL.revokeObjectURL(url);
-    } else if (format === 'json') {
-      const json = JSON.stringify(graphData, null, 2);
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'graph-data.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    
-    toast({
-      title: "Export successful",
-      description: `Graph exported as ${format.toUpperCase()}`
-    });
-  };
-
-  // Update detected format when input changes
+  // Render tree visualization
   useEffect(() => {
-    const format = detectFormat(input);
-    setDetectedFormat(format);
-  }, [input, detectFormat]);
+    if (!treeData || !svgRef.current || !gRef.current) return;
+
+    const svg = d3.select(svgRef.current);
+    const g = d3.select(gRef.current);
+    
+    // Clear previous content
+    g.selectAll("*").remove();
+
+    const width = containerRef.current?.clientWidth || 800;
+    const height = containerRef.current?.clientHeight || 600;
+
+    if (viewMode === 'tree') {
+      // Tree layout
+      const treeLayout = d3.tree<TreeNode>()
+        .size([height - 100, width - 200])
+        .separation((a, b) => (a.parent === b.parent ? 1 : 2));
+
+      const root = d3.hierarchy(treeData);
+      const treeRoot = treeLayout(root);
+
+      // Links
+      g.selectAll('.link')
+        .data(treeRoot.links())
+        .enter()
+        .append('path')
+        .attr('class', 'link')
+        .attr('fill', 'none')
+        .attr('stroke', '#e2e8f0')
+        .attr('stroke-width', 2)
+        .attr('d', d3.linkHorizontal<any, any>()
+          .x(d => d.y + 100)
+          .y(d => d.x + 50)
+        );
+
+      // Nodes
+      const nodes = g.selectAll('.node')
+        .data(treeRoot.descendants())
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .attr('transform', d => `translate(${d.y + 100},${d.x + 50})`);
+
+      // Node circles
+      nodes.append('circle')
+        .attr('r', 6)
+        .attr('fill', d => getNodeColor((d.data as TreeNode).type))
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 2)
+        .style('cursor', 'pointer')
+        .on('click', (event, d) => {
+          const node = d.data as TreeNode;
+          if (node.value !== undefined) {
+            navigator.clipboard.writeText(JSON.stringify(node.value));
+            toast({
+              title: "Copied",
+              description: "Value copied to clipboard"
+            });
+          }
+        });
+
+      // Node labels - keys
+      nodes.append('text')
+        .attr('dy', -10)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '12px')
+        .style('fill', '#374151')
+        .text(d => (d.data as TreeNode).name);
+
+      // Node labels - values
+      nodes.filter(d => (d.data as TreeNode).value !== undefined)
+        .append('text')
+        .attr('dy', 20)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '11px')
+        .style('fill', '#6b7280')
+        .text(d => {
+          const value = (d.data as TreeNode).value;
+          const str = JSON.stringify(value);
+          return str.length > 20 ? str.substring(0, 20) + '...' : str;
+        });
+    } else {
+      // Force-directed graph layout
+      const simulation = d3.forceSimulation(treeData ? flattenTree(treeData) : [])
+        .force('link', d3.forceLink<any, any>()
+          .id(d => d.id)
+          .distance(50))
+        .force('charge', d3.forceManyBody().strength(-300))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(30));
+
+      const links = getLinks(treeData);
+      
+      // Links
+      const link = g.selectAll('.link')
+        .data(links)
+        .enter()
+        .append('line')
+        .attr('class', 'link')
+        .attr('stroke', '#e2e8f0')
+        .attr('stroke-width', 2);
+
+      // Nodes
+      const node = g.selectAll('.node')
+        .data(flattenTree(treeData))
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .call(d3.drag<any, any>()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended));
+
+      node.append('circle')
+        .attr('r', 20)
+        .attr('fill', d => getNodeColor(d.type))
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 2)
+        .style('cursor', 'pointer');
+
+      node.append('text')
+        .attr('dy', 4)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '12px')
+        .style('fill', '#fff')
+        .text(d => d.name);
+
+      simulation.on('tick', () => {
+        link
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+
+      function dragstarted(event: any, d: any) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(event: any, d: any) {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+
+      function dragended(event: any, d: any) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+    }
+
+    // Setup zoom
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.1, 4])
+      .on('zoom', (event) => {
+        g.attr('transform', event.transform);
+        setZoomLevel(event.transform.k);
+      });
+
+    svg.call(zoom);
+
+  }, [treeData, viewMode, toast]);
+
+  // Flatten tree for force layout
+  const flattenTree = (node: TreeNode): any[] => {
+    const nodes = [node];
+    if (node.children) {
+      node.children.forEach(child => {
+        nodes.push(...flattenTree(child));
+      });
+    }
+    return nodes;
+  };
+
+  // Get links for force layout
+  const getLinks = (node: TreeNode): any[] => {
+    const links: any[] = [];
+    if (node.children) {
+      node.children.forEach(child => {
+        links.push({ source: node, target: child });
+        links.push(...getLinks(child));
+      });
+    }
+    return links;
+  };
+
+  // Handle zoom
+  const handleZoom = (delta: number) => {
+    if (!svgRef.current || !gRef.current) return;
+    
+    const svg = d3.select(svgRef.current);
+    const newZoom = Math.max(0.1, Math.min(4, zoomLevel + delta));
+    
+    svg.transition()
+      .duration(300)
+      .call(
+        d3.zoom<SVGSVGElement, unknown>().transform as any,
+        d3.zoomIdentity.scale(newZoom)
+      );
+  };
+
+  // Export as image
+  const exportAsImage = (format: 'png' | 'svg') => {
+    if (!svgRef.current) return;
+
+    if (format === 'svg') {
+      const svgData = new XMLSerializer().serializeToString(svgRef.current);
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      saveAs(blob, 'data-visualization.svg');
+    } else {
+      // Convert SVG to PNG
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const svgData = new XMLSerializer().serializeToString(svgRef.current);
+      const img = new Image();
+      
+      canvas.width = svgRef.current.clientWidth;
+      canvas.height = svgRef.current.clientHeight;
+      
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) saveAs(blob, 'data-visualization.png');
+        });
+      };
+      
+      img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+    }
+  };
+
+  // Load example
+  const loadExample = () => {
+    setInput(JSON.stringify(exampleJson, null, 2));
+  };
+
+  // Toggle fullscreen
+  const toggleFullscreen = () => {
+    if (!isFullscreen) {
+      containerRef.current?.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
+  };
 
   return (
-    <div className="space-y-4">
-      {/* Input Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Data Input</span>
-            <div className="flex items-center gap-2">
-              <span className={`text-sm px-2 py-1 rounded ${
-                detectedFormat.confidence > 80 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                detectedFormat.confidence > 50 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
-              }`}>
-                {detectedFormat.format.toUpperCase()} {detectedFormat.confidence}%
-              </span>
-              {detectedFormat.error && (
-                <span className="text-sm text-red-500">{detectedFormat.error}</span>
-              )}
-            </div>
+    <Card className="h-full">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <GitBranch className="w-5 h-5" />
+            Data Visualizer (JsonCrack-inspired)
           </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Textarea
-            placeholder="Paste your JSON, XML, YAML, or CSV data here..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="min-h-[200px] font-mono text-sm"
-          />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={loadExample}>
+              <FileJson className="w-4 h-4 mr-1" />
+              Example
+            </Button>
+            <Select value={viewMode} onValueChange={(v: any) => setViewMode(v)}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tree">
+                  <div className="flex items-center gap-2">
+                    <TreePine className="w-4 h-4" />
+                    Tree View
+                  </div>
+                </SelectItem>
+                <SelectItem value="graph">
+                  <div className="flex items-center gap-2">
+                    <Network className="w-4 h-4" />
+                    Graph View
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="flex h-[calc(100%-5rem)] gap-4">
+        {/* Left Panel - Input */}
+        <div className="w-1/3 space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Input Data</label>
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Paste your JSON, YAML, XML, or CSV data here..."
+              className="h-[400px] font-mono text-sm"
+            />
+          </div>
+          
           <div className="flex gap-2">
             <Button 
-              onClick={processData} 
-              disabled={isProcessing || detectedFormat.format === 'unknown'}
+              onClick={parseInput} 
+              disabled={isProcessing}
               className="flex-1"
             >
-              <Eye className="w-4 h-4 mr-2" />
-              Visualize Data
+              <Eye className="w-4 h-4 mr-1" />
+              Visualize
             </Button>
             <Button
               variant="outline"
               onClick={() => {
                 setInput('');
-                setGraphData(null);
-                if (cyRef.current) {
-                  cyRef.current.destroy();
-                  cyRef.current = null;
-                }
+                setTreeData(null);
               }}
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Clear
+              <RefreshCw className="w-4 h-4" />
             </Button>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Visualization Section */}
-      {graphData && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Interactive Graph</span>
-              <div className="flex items-center gap-2">
-                {/* Layout Selector */}
-                <Select value={selectedLayout} onValueChange={changeLayout}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fcose">Force</SelectItem>
-                    <SelectItem value="dagre">Tree</SelectItem>
-                    <SelectItem value="grid">Grid</SelectItem>
-                    <SelectItem value="circle">Circle</SelectItem>
-                    <SelectItem value="breadthfirst">Breadth First</SelectItem>
-                    <SelectItem value="cola">Cola</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Search */}
-                <div className="flex items-center gap-1">
-                  <Input
-                    placeholder="Search nodes..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    className="w-32"
-                  />
-                  <Button size="sm" variant="outline" onClick={handleSearch}>
-                    <Search className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                {/* Zoom Controls */}
-                <div className="flex items-center gap-1">
-                  <Button size="sm" variant="outline" onClick={() => handleZoom('in')}>
-                    <ZoomIn className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleZoom('out')}>
-                    <ZoomOut className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleZoom('fit')}>
-                    <Maximize className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                {/* Export Options */}
-                <div className="flex items-center gap-1">
-                  <Button size="sm" variant="outline" onClick={() => exportGraph('png')}>
-                    <FileImage className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => exportGraph('json')}>
-                    <FileJson className="w-4 h-4" />
-                  </Button>
-                </div>
+          {nodeCount > 0 && (
+            <div className="p-3 bg-muted rounded-lg space-y-2">
+              <div className="text-sm">
+                <span className="font-medium">Nodes:</span> {nodeCount}
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div 
-              ref={containerRef} 
-              className="w-full h-[600px] border rounded-lg bg-gray-50 dark:bg-gray-900"
-              style={{ position: 'relative' }}
-            />
-            
-            {/* Legend */}
-            <div className="mt-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
-              <h4 className="font-semibold mb-2">Node Types</h4>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-[#0079F2] rounded"></div>
-                  <span>Object</span>
+              <div className="text-sm">
+                <span className="font-medium">View:</span> {viewMode}
+              </div>
+              <div className="text-sm">
+                <span className="font-medium">Zoom:</span> {Math.round(zoomLevel * 100)}%
+              </div>
+            </div>
+          )}
+
+          {/* Legend */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Node Types</h4>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {[
+                { type: 'object', label: 'Object', color: '#0ea5e9' },
+                { type: 'array', label: 'Array', color: '#10b981' },
+                { type: 'string', label: 'String', color: '#f59e0b' },
+                { type: 'number', label: 'Number', color: '#8b5cf6' },
+                { type: 'boolean', label: 'Boolean', color: '#ef4444' },
+                { type: 'null', label: 'Null', color: '#6b7280' }
+              ].map(({ type, label, color }) => (
+                <div key={type} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
+                  <span>{label}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-[#10B981] rounded"></div>
-                  <span>Array</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-[#F59E0B] rounded"></div>
-                  <span>String</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-[#8B5CF6] rounded"></div>
-                  <span>Number</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-[#EF4444] rounded"></div>
-                  <span>Boolean</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-[#6B7280] rounded"></div>
-                  <span>Null</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel - Visualization */}
+        <div className="flex-1 relative border rounded-lg bg-gray-50 dark:bg-gray-900">
+          <div className="absolute top-2 right-2 z-10 flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handleZoom(0.2)}
+            >
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handleZoom(-0.2)}
+            >
+              <ZoomOut className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleFullscreen}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            </Button>
+            <Select onValueChange={(format: any) => exportAsImage(format)}>
+              <SelectTrigger className="w-24">
+                <Download className="w-4 h-4 mr-1" />
+                Export
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="png">PNG</SelectItem>
+                <SelectItem value="svg">SVG</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div ref={containerRef} className="w-full h-full">
+            <svg ref={svgRef} width="100%" height="100%">
+              <g ref={gRef} />
+            </svg>
+          </div>
+
+          {!treeData && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center space-y-4">
+                <GitBranch className="w-16 h-16 mx-auto text-muted-foreground" />
+                <div>
+                  <h3 className="text-lg font-medium">No Data to Visualize</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Paste your data and click "Visualize" to see the graph
+                  </p>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Usage Tips */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Usage Tips</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-            <li>The tool automatically detects JSON, XML, YAML, and CSV formats</li>
-            <li>Click on nodes to see detailed information</li>
-            <li>Drag nodes to reposition them manually</li>
-            <li>Use the layout selector to change graph arrangement</li>
-            <li>Search for specific nodes using the search bar</li>
-            <li>Export your visualization as PNG or JSON</li>
-            <li>Mouse wheel to zoom, drag to pan the view</li>
-          </ul>
-        </CardContent>
-      </Card>
-    </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
