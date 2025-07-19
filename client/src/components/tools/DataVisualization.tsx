@@ -28,10 +28,19 @@ import {
   FileJson,
   FileText,
   Database,
-  Braces
+  Braces,
+  Box,
+  Circle,
+  Square,
+  Hash,
+  Type,
+  ToggleLeft,
+  X,
+  Clipboard
 } from 'lucide-react';
 import * as d3 from 'd3';
 import { saveAs } from 'file-saver';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface TreeNode {
   id: string;
@@ -44,6 +53,7 @@ interface TreeNode {
   x?: number;
   y?: number;
   collapsed?: boolean;
+  _collapsed?: boolean;
 }
 
 export function DataVisualization() {
@@ -55,11 +65,14 @@ export function DataVisualization() {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [nodeCount, setNodeCount] = useState(0);
+  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
+  const [hoveredNode, setHoveredNode] = useState<TreeNode | null>(null);
   const { toast } = useToast();
   
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const gRef = useRef<SVGGElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Example JSON
   const exampleJson = {
@@ -82,7 +95,7 @@ export function DataVisualization() {
   };
 
   // Convert JSON to tree structure
-  const jsonToTree = (data: any, name: string = 'root', parent: TreeNode | null = null): TreeNode => {
+  const jsonToTree = (data: any, name: string = 'root', parent: TreeNode | null = null, depth: number = 0): TreeNode => {
     const id = Math.random().toString(36).substr(2, 9);
     const type = Array.isArray(data) ? 'array' : data === null ? 'null' : typeof data as any;
     
@@ -91,16 +104,19 @@ export function DataVisualization() {
       name,
       type,
       parent,
-      children: []
+      children: [],
+      depth,
+      collapsed: false,
+      _collapsed: false
     };
 
     if (type === 'object' && data !== null) {
       node.children = Object.entries(data).map(([key, value]) => 
-        jsonToTree(value, key, node)
+        jsonToTree(value, key, node, depth + 1)
       );
     } else if (type === 'array') {
       node.children = data.map((item: any, index: number) => 
-        jsonToTree(item, `[${index}]`, node)
+        jsonToTree(item, `[${index}]`, node, depth + 1)
       );
     } else {
       node.value = data;
@@ -108,6 +124,21 @@ export function DataVisualization() {
 
     return node;
   };
+
+  // Handle paste event
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text');
+    
+    // Try to detect and format JSON
+    try {
+      const parsed = JSON.parse(pastedData);
+      setInput(JSON.stringify(parsed, null, 2));
+    } catch {
+      // If not valid JSON, just paste as-is
+      setInput(pastedData);
+    }
+  }, []);
 
   // Parse input
   const parseInput = useCallback(() => {
@@ -153,7 +184,7 @@ export function DataVisualization() {
   // Get node color based on type
   const getNodeColor = (type: string) => {
     switch (type) {
-      case 'object': return '#0ea5e9'; // sky-500
+      case 'object': return '#3b82f6'; // blue-500
       case 'array': return '#10b981'; // emerald-500
       case 'string': return '#f59e0b'; // amber-500
       case 'number': return '#8b5cf6'; // violet-500
@@ -162,6 +193,39 @@ export function DataVisualization() {
       default: return '#64748b'; // slate-500
     }
   };
+
+  // Get icon for node type
+  const getNodeIcon = (type: string) => {
+    switch (type) {
+      case 'object': return Braces;
+      case 'array': return Square;
+      case 'string': return Type;
+      case 'number': return Hash;
+      case 'boolean': return ToggleLeft;
+      case 'null': return X;
+      default: return Circle;
+    }
+  };
+
+  // Toggle node collapse state
+  const toggleNodeCollapse = useCallback((nodeId: string) => {
+    if (!treeData) return;
+
+    const updateNode = (node: TreeNode): TreeNode => {
+      if (node.id === nodeId) {
+        return { ...node, collapsed: !node.collapsed };
+      }
+      if (node.children) {
+        return {
+          ...node,
+          children: node.children.map(updateNode)
+        };
+      }
+      return node;
+    };
+
+    setTreeData(updateNode(treeData));
+  }, [treeData]);
 
   // Render tree visualization
   useEffect(() => {
@@ -178,72 +242,161 @@ export function DataVisualization() {
 
     if (viewMode === 'tree') {
       // Tree layout
-      const treeLayout = d3.tree<TreeNode>()
-        .size([height - 100, width - 200])
-        .separation((a, b) => (a.parent === b.parent ? 1 : 2));
+      const nodeWidth = 200;
+      const nodeHeight = 80;
+      const horizontalSpacing = 250;
+      const verticalSpacing = 120;
+
+      // Filter collapsed nodes
+      const filterCollapsed = (node: d3.HierarchyNode<TreeNode>): boolean => {
+        const data = node.data;
+        if (data.collapsed) {
+          node.children = undefined;
+          return true;
+        }
+        if (node.children) {
+          node.children = node.children.filter(filterCollapsed);
+        }
+        return true;
+      };
 
       const root = d3.hierarchy(treeData);
+      filterCollapsed(root);
+
+      const treeLayout = d3.tree<TreeNode>()
+        .nodeSize([verticalSpacing, horizontalSpacing])
+        .separation((a, b) => 1);
+
       const treeRoot = treeLayout(root);
 
-      // Links
-      g.selectAll('.link')
+      // Center the tree
+      const bounds = {
+        minX: Infinity,
+        maxX: -Infinity,
+        minY: Infinity,
+        maxY: -Infinity
+      };
+
+      treeRoot.descendants().forEach(d => {
+        bounds.minX = Math.min(bounds.minX, d.y);
+        bounds.maxX = Math.max(bounds.maxX, d.y);
+        bounds.minY = Math.min(bounds.minY, d.x);
+        bounds.maxY = Math.max(bounds.maxY, d.x);
+      });
+
+      const centerX = width / 2 - (bounds.minX + bounds.maxX) / 2;
+      const centerY = height / 2 - (bounds.minY + bounds.maxY) / 2;
+
+      // Links with curved paths
+      const linkGroup = g.append('g').attr('class', 'links');
+      
+      linkGroup.selectAll('.link')
         .data(treeRoot.links())
         .enter()
         .append('path')
         .attr('class', 'link')
         .attr('fill', 'none')
-        .attr('stroke', '#e2e8f0')
+        .attr('stroke', '#cbd5e1')
         .attr('stroke-width', 2)
         .attr('d', d3.linkHorizontal<any, any>()
-          .x(d => d.y + 100)
-          .y(d => d.x + 50)
+          .x(d => d.y + centerX)
+          .y(d => d.x + centerY)
         );
 
-      // Nodes
-      const nodes = g.selectAll('.node')
+      // Node groups
+      const nodes = g.append('g')
+        .attr('class', 'nodes')
+        .selectAll('.node')
         .data(treeRoot.descendants())
         .enter()
         .append('g')
         .attr('class', 'node')
-        .attr('transform', d => `translate(${d.y + 100},${d.x + 50})`);
+        .attr('transform', d => `translate(${d.y + centerX},${d.x + centerY})`)
+        .style('cursor', 'pointer');
 
-      // Node circles
-      nodes.append('circle')
-        .attr('r', 6)
-        .attr('fill', d => getNodeColor((d.data as TreeNode).type))
-        .attr('stroke', '#fff')
+      // Node background rectangles
+      nodes.append('rect')
+        .attr('x', -nodeWidth / 2)
+        .attr('y', -nodeHeight / 2)
+        .attr('width', nodeWidth)
+        .attr('height', nodeHeight)
+        .attr('rx', 8)
+        .attr('fill', '#ffffff')
+        .attr('stroke', d => getNodeColor((d.data as TreeNode).type))
         .attr('stroke-width', 2)
-        .style('cursor', 'pointer')
+        .on('mouseenter', (event, d) => setHoveredNode(d.data as TreeNode))
+        .on('mouseleave', () => setHoveredNode(null))
         .on('click', (event, d) => {
+          event.stopPropagation();
           const node = d.data as TreeNode;
-          if (node.value !== undefined) {
-            navigator.clipboard.writeText(JSON.stringify(node.value));
-            toast({
-              title: "Copied",
-              description: "Value copied to clipboard"
-            });
+          if (node.children && node.children.length > 0) {
+            toggleNodeCollapse(node.id);
+          } else {
+            setSelectedNode(node);
           }
         });
 
-      // Node labels - keys
-      nodes.append('text')
-        .attr('dy', -10)
-        .attr('text-anchor', 'middle')
-        .style('font-size', '12px')
-        .style('fill', '#374151')
-        .text(d => (d.data as TreeNode).name);
+      // Add node type icon background
+      nodes.append('rect')
+        .attr('x', -nodeWidth / 2 + 10)
+        .attr('y', -nodeHeight / 2 + 10)
+        .attr('width', 30)
+        .attr('height', 30)
+        .attr('rx', 6)
+        .attr('fill', d => getNodeColor((d.data as TreeNode).type))
+        .attr('opacity', 0.1);
 
-      // Node labels - values
-      nodes.filter(d => (d.data as TreeNode).value !== undefined)
+      // Add collapse/expand indicator for parent nodes
+      nodes.filter(d => (d.data as TreeNode).children && (d.data as TreeNode).children!.length > 0)
+        .append('circle')
+        .attr('cx', nodeWidth / 2 - 15)
+        .attr('cy', 0)
+        .attr('r', 10)
+        .attr('fill', '#f3f4f6')
+        .attr('stroke', '#e5e7eb')
+        .attr('stroke-width', 1);
+
+      nodes.filter(d => (d.data as TreeNode).children && (d.data as TreeNode).children!.length > 0)
         .append('text')
-        .attr('dy', 20)
+        .attr('x', nodeWidth / 2 - 15)
+        .attr('y', 5)
         .attr('text-anchor', 'middle')
-        .style('font-size', '11px')
+        .style('font-size', '14px')
+        .style('fill', '#6b7280')
+        .style('font-weight', 'bold')
+        .text(d => (d.data as TreeNode).collapsed ? '+' : '−');
+
+      // Node name
+      nodes.append('text')
+        .attr('x', -nodeWidth / 2 + 50)
+        .attr('y', -5)
+        .style('font-size', '14px')
+        .style('font-weight', '600')
+        .style('fill', '#1f2937')
+        .text(d => (d.data as TreeNode).name)
+        .each(function(d) {
+          const text = d3.select(this);
+          const textLength = text.node()?.getComputedTextLength() || 0;
+          if (textLength > nodeWidth - 70) {
+            text.text((d.data as TreeNode).name.substring(0, 20) + '...');
+          }
+        });
+
+      // Node value or type
+      nodes.append('text')
+        .attr('x', -nodeWidth / 2 + 50)
+        .attr('y', 15)
+        .style('font-size', '12px')
         .style('fill', '#6b7280')
         .text(d => {
-          const value = (d.data as TreeNode).value;
-          const str = JSON.stringify(value);
-          return str.length > 20 ? str.substring(0, 20) + '...' : str;
+          const node = d.data as TreeNode;
+          if (node.value !== undefined) {
+            const str = JSON.stringify(node.value);
+            return str.length > 30 ? str.substring(0, 30) + '...' : str;
+          } else if (node.children) {
+            return `${node.type} (${node.children.length} items)`;
+          }
+          return node.type;
         });
     } else {
       // Force-directed graph layout
@@ -413,6 +566,29 @@ export function DataVisualization() {
     setIsFullscreen(!isFullscreen);
   };
 
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl + V - Focus textarea for paste
+      if ((e.metaKey || e.ctrlKey) && e.key === 'v' && document.activeElement !== textareaRef.current) {
+        e.preventDefault();
+        textareaRef.current?.focus();
+      }
+      // Cmd/Ctrl + Enter - Visualize
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        parseInput();
+      }
+      // Escape - Clear selection
+      if (e.key === 'Escape') {
+        setSelectedNode(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [parseInput]);
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -454,10 +630,13 @@ export function DataVisualization() {
           <div className="space-y-2">
             <label className="text-sm font-medium">Input Data</label>
             <Textarea
+              ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste your JSON, YAML, XML, or CSV data here..."
-              className="h-[400px] font-mono text-sm"
+              onPaste={handlePaste}
+              placeholder="Paste your JSON data here..."
+              className="h-[400px] font-mono text-sm resize-none"
+              spellCheck={false}
             />
           </div>
           
@@ -500,7 +679,7 @@ export function DataVisualization() {
             <h4 className="text-sm font-medium">Node Types</h4>
             <div className="grid grid-cols-2 gap-2 text-xs">
               {[
-                { type: 'object', label: 'Object', color: '#0ea5e9' },
+                { type: 'object', label: 'Object', color: '#3b82f6' },
                 { type: 'array', label: 'Array', color: '#10b981' },
                 { type: 'string', label: 'String', color: '#f59e0b' },
                 { type: 'number', label: 'Number', color: '#8b5cf6' },
@@ -514,6 +693,49 @@ export function DataVisualization() {
               ))}
             </div>
           </div>
+
+          {/* Selected Node Details */}
+          {selectedNode && (
+            <div className="p-3 border rounded-lg space-y-2">
+              <div className="flex justify-between items-center">
+                <h4 className="text-sm font-medium">Selected Node</h4>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedNode(null)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="text-xs space-y-1">
+                <div><span className="font-medium">Key:</span> {selectedNode.name}</div>
+                <div><span className="font-medium">Type:</span> {selectedNode.type}</div>
+                {selectedNode.value !== undefined && (
+                  <div>
+                    <span className="font-medium">Value:</span>
+                    <div className="mt-1 p-2 bg-muted rounded font-mono text-xs break-all">
+                      {JSON.stringify(selectedNode.value, null, 2)}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-2 w-full"
+                      onClick={() => {
+                        navigator.clipboard.writeText(JSON.stringify(selectedNode.value));
+                        toast({
+                          title: "Copied",
+                          description: "Value copied to clipboard"
+                        });
+                      }}
+                    >
+                      <Copy className="w-3 h-3 mr-1" />
+                      Copy Value
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Panel - Visualization */}
