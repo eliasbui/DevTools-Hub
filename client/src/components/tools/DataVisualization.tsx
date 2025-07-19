@@ -36,11 +36,14 @@ import {
   Type,
   ToggleLeft,
   X,
-  Clipboard
+  Clipboard,
+  FileCode,
+  Table
 } from 'lucide-react';
 import * as d3 from 'd3';
 import { saveAs } from 'file-saver';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import * as jsyaml from 'js-yaml';
 
 interface TreeNode {
   id: string;
@@ -94,6 +97,171 @@ export function DataVisualization() {
     ]
   };
 
+  // Detect data format
+  const detectDataFormat = (data: string): 'json' | 'xml' | 'yaml' | 'csv' | 'unknown' => {
+    const trimmed = data.trim();
+    
+    // JSON detection
+    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || 
+        (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+      try {
+        JSON.parse(trimmed);
+        return 'json';
+      } catch {}
+    }
+    
+    // XML detection
+    if (trimmed.startsWith('<') && trimmed.endsWith('>')) {
+      return 'xml';
+    }
+    
+    // CSV detection - check for comma-separated values with consistent columns
+    const lines = trimmed.split('\n');
+    if (lines.length > 1) {
+      const firstLineCommas = (lines[0].match(/,/g) || []).length;
+      if (firstLineCommas > 0 && lines.slice(1, 3).every(line => 
+        (line.match(/,/g) || []).length === firstLineCommas)) {
+        return 'csv';
+      }
+    }
+    
+    // YAML detection
+    if (trimmed.includes(':') && (trimmed.includes('\n') || trimmed.includes('- '))) {
+      try {
+        jsyaml.load(trimmed);
+        return 'yaml';
+      } catch {}
+    }
+    
+    return 'unknown';
+  };
+
+  // Parse XML to tree structure
+  const xmlToTree = (xmlString: string): TreeNode | null => {
+    try {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+      
+      if (xmlDoc.querySelector('parsererror')) {
+        throw new Error('Invalid XML');
+      }
+      
+      const convertNode = (node: Element, name: string = 'root'): TreeNode => {
+        const treeNode: TreeNode = {
+          id: Math.random().toString(36).substr(2, 9),
+          name: name,
+          type: 'object',
+          children: [],
+          depth: 0,
+          collapsed: false,
+          _collapsed: false
+        };
+        
+        // Add attributes as children
+        if (node.attributes.length > 0) {
+          for (let i = 0; i < node.attributes.length; i++) {
+            const attr = node.attributes[i];
+            treeNode.children!.push({
+              id: Math.random().toString(36).substr(2, 9),
+              name: `@${attr.name}`,
+              type: 'string',
+              value: attr.value,
+              children: [],
+              depth: 1,
+              collapsed: false,
+              _collapsed: false
+            });
+          }
+        }
+        
+        // Add text content if no child elements
+        if (node.childNodes.length === 1 && node.childNodes[0].nodeType === 3) {
+          const text = node.textContent?.trim();
+          if (text) {
+            treeNode.type = 'string';
+            treeNode.value = text;
+            treeNode.children = undefined;
+          }
+        } else {
+          // Add child elements
+          for (let i = 0; i < node.children.length; i++) {
+            const child = node.children[i];
+            treeNode.children!.push(convertNode(child, child.tagName));
+          }
+        }
+        
+        return treeNode;
+      };
+      
+      return convertNode(xmlDoc.documentElement, xmlDoc.documentElement.tagName);
+    } catch (error) {
+      return null;
+    }
+  };
+
+  // Parse CSV to tree structure
+  const csvToTree = (csvString: string): TreeNode | null => {
+    try {
+      const lines = csvString.trim().split('\n');
+      if (lines.length < 2) return null;
+      
+      const headers = lines[0].split(',').map(h => h.trim());
+      const rows: TreeNode[] = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim());
+        const row: TreeNode = {
+          id: Math.random().toString(36).substr(2, 9),
+          name: `Row ${i}`,
+          type: 'object',
+          children: [],
+          depth: 1,
+          collapsed: false,
+          _collapsed: false
+        };
+        
+        headers.forEach((header, index) => {
+          if (values[index] !== undefined) {
+            row.children!.push({
+              id: Math.random().toString(36).substr(2, 9),
+              name: header,
+              type: 'string',
+              value: values[index],
+              children: [],
+              depth: 2,
+              collapsed: false,
+              _collapsed: false
+            });
+          }
+        });
+        
+        rows.push(row);
+      }
+      
+      return {
+        id: Math.random().toString(36).substr(2, 9),
+        name: 'CSV Data',
+        type: 'array',
+        children: rows,
+        depth: 0,
+        collapsed: false,
+        _collapsed: false
+      };
+    } catch (error) {
+      return null;
+    }
+  };
+
+  // Parse YAML to tree structure  
+  const yamlToTree = (yamlString: string): TreeNode | null => {
+    try {
+      const data = jsyaml.load(yamlString);
+      return jsonToTree(data, 'root');
+    } catch (error) {
+      return null;
+    }
+  };
+
   // Convert JSON to tree structure
   const jsonToTree = (data: any, name: string = 'root', parent: TreeNode | null = null, depth: number = 0): TreeNode => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -129,13 +297,32 @@ export function DataVisualization() {
   const handlePaste = useCallback((e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text');
+    const format = detectDataFormat(pastedData);
     
-    // Try to detect and format JSON
-    try {
-      const parsed = JSON.parse(pastedData);
-      setInput(JSON.stringify(parsed, null, 2));
-    } catch {
-      // If not valid JSON, just paste as-is
+    // Format based on detected type
+    if (format === 'json') {
+      try {
+        const parsed = JSON.parse(pastedData);
+        setInput(JSON.stringify(parsed, null, 2));
+      } catch {
+        setInput(pastedData);
+      }
+    } else if (format === 'yaml') {
+      // YAML is already human-readable, just set it
+      setInput(pastedData);
+    } else if (format === 'xml') {
+      // Pretty-print XML
+      try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(pastedData, 'text/xml');
+        const serializer = new XMLSerializer();
+        const formatted = serializer.serializeToString(xmlDoc);
+        setInput(formatted);
+      } catch {
+        setInput(pastedData);
+      }
+    } else {
+      // CSV or unknown, paste as-is
       setInput(pastedData);
     }
   }, []);
@@ -152,24 +339,59 @@ export function DataVisualization() {
     }
 
     setIsProcessing(true);
+    
     try {
-      const data = JSON.parse(input);
-      const tree = jsonToTree(data);
-      setTreeData(tree);
+      const format = detectDataFormat(input);
+      let tree: TreeNode | null = null;
       
-      // Count nodes
-      let count = 0;
-      const countNodes = (node: TreeNode) => {
-        count++;
-        node.children?.forEach(countNodes);
-      };
-      countNodes(tree);
-      setNodeCount(count);
+      switch (format) {
+        case 'json':
+          const jsonData = JSON.parse(input);
+          tree = jsonToTree(jsonData);
+          break;
+          
+        case 'xml':
+          tree = xmlToTree(input);
+          if (!tree) {
+            throw new Error('Invalid XML format');
+          }
+          break;
+          
+        case 'yaml':
+          tree = yamlToTree(input);
+          if (!tree) {
+            throw new Error('Invalid YAML format');
+          }
+          break;
+          
+        case 'csv':
+          tree = csvToTree(input);
+          if (!tree) {
+            throw new Error('Invalid CSV format');
+          }
+          break;
+          
+        default:
+          throw new Error('Unsupported data format. Please provide JSON, XML, YAML, or CSV data.');
+      }
       
-      toast({
-        title: "Success",
-        description: `Visualized ${count} nodes`
-      });
+      if (tree) {
+        setTreeData(tree);
+        
+        // Count nodes
+        let count = 0;
+        const countNodes = (node: TreeNode) => {
+          count++;
+          node.children?.forEach(countNodes);
+        };
+        countNodes(tree);
+        setNodeCount(count);
+        
+        toast({
+          title: "Success",
+          description: `Visualized ${count} nodes from ${format.toUpperCase()} data`
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Parse Error",
@@ -552,8 +774,60 @@ export function DataVisualization() {
   };
 
   // Load example
-  const loadExample = () => {
-    setInput(JSON.stringify(exampleJson, null, 2));
+  const loadExample = (type: 'json' | 'xml' | 'yaml' | 'csv' = 'json') => {
+    switch (type) {
+      case 'json':
+        setInput(JSON.stringify(exampleJson, null, 2));
+        break;
+      case 'xml':
+        setInput(`<?xml version="1.0" encoding="UTF-8"?>
+<company>
+  <name>Tech Corp</name>
+  <employees>
+    <employee id="1">
+      <name>John Doe</name>
+      <position>Developer</position>
+      <skills>
+        <skill>JavaScript</skill>
+        <skill>React</skill>
+      </skills>
+    </employee>
+    <employee id="2">
+      <name>Jane Smith</name>
+      <position>Designer</position>
+      <skills>
+        <skill>UI/UX</skill>
+        <skill>Figma</skill>
+      </skills>
+    </employee>
+  </employees>
+</company>`);
+        break;
+      case 'yaml':
+        setInput(`company:
+  name: Tech Corp
+  employees:
+    - id: 1
+      name: John Doe
+      position: Developer
+      skills:
+        - JavaScript
+        - React
+    - id: 2
+      name: Jane Smith
+      position: Designer
+      skills:
+        - UI/UX
+        - Figma`);
+        break;
+      case 'csv':
+        setInput(`id,name,position,department,salary
+1,John Doe,Developer,Engineering,95000
+2,Jane Smith,Designer,Design,85000
+3,Bob Johnson,Manager,Sales,105000
+4,Alice Brown,Developer,Engineering,92000`);
+        break;
+    }
   };
 
   // Toggle fullscreen
@@ -595,13 +869,23 @@ export function DataVisualization() {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <GitBranch className="w-5 h-5" />
-            Data Visualizer (JsonCrack-inspired)
+            Data Visualizer (JSON/XML/YAML/CSV)
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={loadExample}>
-              <FileJson className="w-4 h-4 mr-1" />
-              Example
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="sm" onClick={() => loadExample('json')} title="Load JSON Example">
+                <FileJson className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => loadExample('xml')} title="Load XML Example">
+                <FileCode className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => loadExample('yaml')} title="Load YAML Example">
+                <FileText className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => loadExample('csv')} title="Load CSV Example">
+                <Table className="w-4 h-4" />
+              </Button>
+            </div>
             <Select value={viewMode} onValueChange={(v: any) => setViewMode(v)}>
               <SelectTrigger className="w-32">
                 <SelectValue />
@@ -634,7 +918,7 @@ export function DataVisualization() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onPaste={handlePaste}
-              placeholder="Paste your JSON data here..."
+              placeholder="Paste your JSON, XML, YAML, or CSV data here..."
               className="h-[400px] font-mono text-sm resize-none"
               spellCheck={false}
             />

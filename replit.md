@@ -24,6 +24,9 @@ This is a comprehensive web application for developers that provides a collectio
   - Added interactive features: node selection, value copying, keyboard shortcuts
   - Improved visual design with type-specific colors and icons
   - Added security measures with proper JSON parsing error handling
+  - **Multi-format Support**: Extended tool to support XML, YAML, and CSV data in addition to JSON
+  - **Auto-detection**: Automatically detects data format when pasting
+  - **Format-specific Examples**: Added example data for each supported format
 
 ✓ **Animated Micro-Interactions**: Implemented delightful animations using Framer Motion throughout the app
 ✓ **Tool Usage Tracking**: Integrated frontend tracking for tool usage with error handling
