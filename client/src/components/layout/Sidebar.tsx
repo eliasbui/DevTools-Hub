@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ChevronDown } from 'lucide-react';
 import { 
   Wand2, 
   Code, 
@@ -131,6 +133,14 @@ interface SidebarProps {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const [search, setSearch] = useState('');
   const [location] = useLocation();
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(() => {
+    // Initialize all categories as open by default
+    const initial: Record<string, boolean> = {};
+    Object.keys(categories).forEach(key => {
+      initial[key] = true;
+    });
+    return initial;
+  });
 
   const filteredTools = tools.filter(tool =>
     tool.name.toLowerCase().includes(search.toLowerCase())
@@ -192,7 +202,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         {/* Search */}
-        <div className="p-4 border-b border-border flex-shrink-0">
+        <div className="p-4 border-b border-border flex-shrink-0 space-y-3">
           <motion.div 
             className="relative"
             initial={{ opacity: 0, y: 10 }}
@@ -206,6 +216,30 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 smooth-transition"
             />
+          </motion.div>
+          
+          {/* Expand/Collapse All Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="flex gap-2"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const allOpen = Object.values(openCategories).every(v => v);
+                const newState: Record<string, boolean> = {};
+                Object.keys(categories).forEach(key => {
+                  newState[key] = !allOpen;
+                });
+                setOpenCategories(newState);
+              }}
+              className="flex-1 text-xs"
+            >
+              {Object.values(openCategories).every(v => v) ? 'Collapse All' : 'Expand All'}
+            </Button>
           </motion.div>
         </div>
 
@@ -223,11 +257,34 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + categoryIndex * 0.1 }}
                 >
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    {label}
-                  </h3>
-                  <div className="space-y-1">
-                    {categoryTools.map((tool, toolIndex) => {
+                  <Collapsible
+                    open={openCategories[key]}
+                    onOpenChange={(open) => setOpenCategories(prev => ({ ...prev, [key]: open }))}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-between p-2 mb-2 hover:bg-accent/50 group transition-all ${
+                          openCategories[key] ? 'bg-accent/20' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            {label}
+                          </h3>
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                            {categoryTools.length}
+                          </span>
+                        </div>
+                        <ChevronDown 
+                          className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                            openCategories[key] ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-1 pl-2">
+                      {categoryTools.map((tool, toolIndex) => {
                       const Icon = tool.icon;
                       const isActive = location === `/tool/${tool.id}` || (location === '/' && tool.id === 'smart-paste');
                       
@@ -270,7 +327,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         </motion.div>
                       );
                     })}
-                  </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </motion.div>
               );
             })}
