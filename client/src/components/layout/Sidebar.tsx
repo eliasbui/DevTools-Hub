@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'wouter';
+import { Link, useLocation, useRoute } from 'wouter';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -337,21 +337,19 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Link href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
-                                    <Button
-                                      variant={isActive ? 'default' : 'ghost'}
-                                      size="sm"
-                                      className={`w-full justify-start smooth-transition ${
+                                    <div 
+                                      onClick={() => setIsOpen(false)}
+                                      className={`flex items-center w-full px-3 py-2 rounded-md text-sm smooth-transition cursor-pointer ${
                                         isActive 
                                           ? 'gradient-primary text-white shadow-sm' 
                                           : 'text-foreground hover:bg-green-500/20 hover:text-green-700 dark:hover:text-green-400'
                                       }`}
-                                      onClick={() => setIsOpen(false)}
                                     >
                                       <Icon className={`w-3.5 h-3.5 mr-2 ${
                                         isActive ? 'text-white' : categoryColors[key as keyof typeof categoryColors]
                                       }`} />
-                                      <span className={`text-sm ${isActive ? 'font-medium' : ''}`}>{tool.name}</span>
-                                    </Button>
+                                      <span className={isActive ? 'font-medium' : ''}>{tool.name}</span>
+                                    </div>
                                   </Link>
                                 </TooltipTrigger>
                                 <TooltipContent side="right" className="notification-pop">
