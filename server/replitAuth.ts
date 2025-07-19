@@ -40,8 +40,6 @@ export function getSession() {
       httpOnly: true,
       secure: true,
       maxAge: sessionTtl,
-      sameSite: 'lax',
-      domain: process.env.REPLIT_DEV_DOMAIN ? `.${process.env.REPLIT_DEV_DOMAIN.split('.').slice(-3).join('.')}` : undefined
     },
   });
 }
@@ -68,9 +66,11 @@ async function upsertUser(
   });
 }
 
-export async function setupReplitAuth(app: Express) {
-  // Don't re-initialize passport and session as they're already set up in setupMultiAuth
+export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
+  app.use(getSession());
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   const config = await getOidcConfig();
 

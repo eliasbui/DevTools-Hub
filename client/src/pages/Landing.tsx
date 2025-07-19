@@ -35,27 +35,21 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex gap-4 justify-center flex-wrap"
+            className="flex gap-4 justify-center"
           >
-            <Button 
-              size="lg" 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => window.location.href = '/api/login'}
-            >
-              Login with Replit
-            </Button>
             <Link href="/signup">
               <Button 
                 size="lg" 
-                variant="outline"
+                className="bg-blue-600 hover:bg-blue-700 text-white animate-pulse-hover"
               >
-                Sign Up with Email
+                Get Started Free
               </Button>
             </Link>
             <Link href="/login">
               <Button 
                 size="lg" 
                 variant="outline"
+                className="animate-pulse-hover"
               >
                 Sign In
               </Button>
@@ -78,53 +72,209 @@ export default function Landing() {
             },
             {
               icon: Code,
-              title: "47+ Developer Tools",
-              description: "Comprehensive collection of converters, generators, validators, and utilities."
+              title: "40+ Developer Tools",
+              description: "JSON formatter, Base64 encoder, UUID generator, regex tester, and many more."
             },
             {
               icon: Shield,
               title: "Privacy First",
-              description: "All processing happens in your browser. Your data never leaves your device."
+              description: "All data processing happens in your browser. Your data never leaves your device."
             }
           ].map((feature, index) => (
             <motion.div
-              key={index}
+              key={feature.title}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 + index * 0.1 }}
+              transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              className="cursor-pointer"
             >
-              <Card className="h-full hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <feature.icon className={`w-12 h-12 ${index === 0 ? 'text-yellow-500' : index === 1 ? 'text-blue-500' : 'text-green-500'} mb-4`} />
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-                </CardContent>
+              <Card className="p-6 smooth-transition hover:shadow-lg">
+                <motion.div
+                  className="w-12 h-12 text-blue-600 mb-4 animate-float"
+                  style={{ animationDelay: `${index * 0.2}s` }}
+                >
+                  <feature.icon className="w-full h-full" />
+                </motion.div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {feature.description}
+                </p>
               </Card>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* AI Assistant Feature */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        {/* Pricing Section */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-4">
+            Simple, Transparent Pricing
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+            Start free, upgrade when you need more
+          </p>
+        </div>
+
+        <motion.div 
+          className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.2 }}
-          className="text-center"
         >
-          <Card className="max-w-2xl mx-auto p-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
-            <Sparkles className="w-16 h-16 text-purple-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-4">AI-Powered Assistant</h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Get instant help with any tool. Our AI assistant understands your needs and guides you to the right solution.
-            </p>
-            <Button 
-              size="lg" 
-              className="bg-purple-600 hover:bg-purple-700 text-white"
-              onClick={() => window.location.href = '/api/login'}
-            >
-              Get Started with AI Assistant
-            </Button>
-          </Card>
+          {/* Free Plan */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.3 }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <Card className="p-6 relative smooth-transition hover:shadow-lg">
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold">Free</h3>
+                <div className="text-3xl font-bold mt-2">$0</div>
+                <div className="text-gray-500">forever</div>
+              </div>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">100 operations/day</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">All basic tools</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Smart paste detection</span>
+                </div>
+              </div>
+              <Link href="/signup">
+                <Button className="w-full animate-pulse-hover">Get Started</Button>
+              </Link>
+            </Card>
+          </motion.div>
+
+          {/* Pro Plan */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.4 }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <Card className="p-6 relative border-blue-600 shadow-lg smooth-transition hover:shadow-xl">
+              <motion.div 
+                className="absolute -top-3 left-1/2 -translate-x-1/2"
+                animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                  Most Popular
+                </span>
+              </motion.div>
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold">Pro</h3>
+                <div className="text-3xl font-bold mt-2">$9.99</div>
+                <div className="text-gray-500">per month</div>
+              </div>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Unlimited operations</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">API history export</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Advanced visualizations</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Priority support</span>
+                </div>
+              </div>
+              <Link href="/signup">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 animate-pulse-hover">
+                  Get Started
+                </Button>
+              </Link>
+            </Card>
+          </motion.div>
+
+          {/* Team Plan */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.5 }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <Card className="p-6 relative smooth-transition hover:shadow-lg">
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold">Team</h3>
+                <div className="text-3xl font-bold mt-2">$19.99</div>
+                <div className="text-gray-500">per user/month</div>
+              </div>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Everything in Pro</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Team collaboration</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Shared workspaces</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Admin controls</span>
+                </div>
+              </div>
+              <Link href="/signup">
+                <Button className="w-full animate-pulse-hover">Get Started</Button>
+              </Link>
+            </Card>
+          </motion.div>
+
+          {/* Enterprise Plan */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.6 }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <Card className="p-6 relative smooth-transition hover:shadow-lg">
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold">Enterprise</h3>
+                <div className="text-3xl font-bold mt-2">Custom</div>
+                <div className="text-gray-500">contact us</div>
+              </div>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Everything in Team</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">SSO/SAML</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Custom integrations</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm">Dedicated support</span>
+                </div>
+              </div>
+              <Button className="w-full animate-pulse-hover" variant="outline">
+                Contact Sales
+              </Button>
+            </Card>
+          </motion.div>
         </motion.div>
       </div>
     </div>

@@ -10,7 +10,8 @@ import { Pricing } from "@/pages/Pricing";
 import { Settings } from "@/pages/Settings";
 import { Favorites } from "@/pages/Favorites";
 import NotFound from "@/pages/not-found";
-
+import Landing from "@/pages/Landing";
+import Marketing from "@/pages/Marketing";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import ForgotPassword from "@/pages/ForgotPassword";
@@ -23,17 +24,22 @@ function Router() {
 
   return (
     <Switch>
+      <Route path="/marketing" component={Marketing} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
-
-      <Route path="/" component={Home} />
-      <Route path="/tool/:id" component={Tool} />
-      <Route path="/pricing" component={Pricing} />
-      <Route path="/settings" component={Settings} />
-      <Route path="/favorites" component={Favorites} />
-
+      {isLoading || !isAuthenticated ? (
+        <Route path="/" component={Landing} />
+      ) : (
+        <>
+          <Route path="/" component={Home} />
+          <Route path="/tool/:id" component={Tool} />
+          <Route path="/pricing" component={Pricing} />
+          <Route path="/settings" component={Settings} />
+          <Route path="/favorites" component={Favorites} />
+        </>
+      )}
       <Route component={NotFound} />
     </Switch>
   );
@@ -42,7 +48,7 @@ function Router() {
 function App() {
   const AppContent = () => {
     const { isAuthenticated } = useAuth();
-
+    
     return (
       <>
         <Router />
