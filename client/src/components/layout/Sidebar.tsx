@@ -1,11 +1,15 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { 
   Wand2, 
   Code, 
@@ -41,7 +45,11 @@ import {
   FileKey,
   Archive,
   FileImage,
-  Star
+  Star,
+  ChevronDown,
+  ChevronRight,
+  FolderOpen,
+  Folder
 } from 'lucide-react';
 
 const tools = [
@@ -97,16 +105,16 @@ const tools = [
 ];
 
 const categories = {
-  featured: 'Featured',
-  converters: 'Data Converters',
-  validation: 'Validation & Debug',
-  generators: 'Generators',
-  network: 'API & Network',
-  design: 'CSS & Design',
-  text: 'Text Processing',
-  database: 'Database Tools',
-  security: 'Security & Encryption',
-  file: 'File Tools'
+  featured: { name: 'Featured', icon: Star },
+  converters: { name: 'Data Converters', icon: Code },
+  validation: { name: 'Validation & Debug', icon: Shield },
+  generators: { name: 'Generators', icon: Wand2 },
+  network: { name: 'API & Network', icon: Send },
+  design: { name: 'CSS & Design', icon: Palette },
+  text: { name: 'Text Processing', icon: Type },
+  database: { name: 'Database Tools', icon: Database },
+  security: { name: 'Security & Encryption', icon: Lock },
+  file: { name: 'File Tools', icon: FileImage }
 };
 
 // Color scheme for categories
@@ -131,6 +139,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const [search, setSearch] = useState('');
   const [location] = useLocation();
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['featured']));
 
   const filteredTools = tools.filter(tool =>
     tool.name.toLowerCase().includes(search.toLowerCase())
@@ -141,6 +150,36 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     acc[tool.category].push(tool);
     return acc;
   }, {} as Record<string, typeof tools>);
+
+  // When searching, expand all categories with results
+  useEffect(() => {
+    if (search) {
+      const categoriesWithResults = Object.keys(groupedTools);
+      setExpandedCategories(new Set(categoriesWithResults));
+    } else {
+      setExpandedCategories(new Set(['featured']));
+    }
+  }, [search, groupedTools]);
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(category)) {
+        newSet.delete(category);
+      } else {
+        newSet.add(category);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleAll = () => {
+    if (expandedCategories.size === Object.keys(categories).length) {
+      setExpandedCategories(new Set(['featured']));
+    } else {
+      setExpandedCategories(new Set(Object.keys(categories)));
+    }
+  };
 
   return (
     <TooltipProvider>
@@ -160,12 +199,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       {/* Sidebar */}
       <motion.div 
         className={`
-          fixed left-0 top-0 h-full w-60 bg-background border-r border-border shadow-lg z-50 
+          fixed left-0 top-0 h-full w-64 bg-background border-r border-border shadow-lg z-50 
           flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0
         `}
-        initial={{ x: -240 }}
+        initial={{ x: -256 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
@@ -192,7 +231,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         {/* Search */}
-        <div className="p-4 border-b border-border flex-shrink-0">
+        <div className="p-4 pb-2 border-b border-border flex-shrink-0">
           <motion.div 
             className="relative"
             initial={{ opacity: 0, y: 10 }}
@@ -207,70 +246,125 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               className="pl-10 smooth-transition"
             />
           </motion.div>
+          
+          {/* Expand/Collapse All */}
+          <motion.div 
+            className="mt-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleAll}
+              className="w-full text-xs text-muted-foreground hover:text-foreground"
+            >
+              {expandedCategories.size === Object.keys(categories).length ? (
+                <>
+                  <Folder className="w-3 h-3 mr-1" />
+                  Collapse all
+                </>
+              ) : (
+                <>
+                  <FolderOpen className="w-3 h-3 mr-1" />
+                  Expand all
+                </>
+              )}
+            </Button>
+          </motion.div>
         </div>
 
         {/* Navigation */}
         <ScrollArea className="flex-1 min-h-0">
-          <nav className="space-y-6 p-4">
-            {Object.entries(categories).map(([key, label], categoryIndex) => {
+          <nav className="space-y-2 p-4">
+            {Object.entries(categories).map(([key, category], categoryIndex) => {
               const categoryTools = groupedTools[key] || [];
-              if (categoryTools.length === 0) return null;
+              const toolCount = tools.filter(t => t.category === key).length;
+              const isExpanded = expandedCategories.has(key);
+              const CategoryIcon = category.icon;
+              
+              // Hide empty categories when searching
+              if (search && categoryTools.length === 0) return null;
 
               return (
                 <motion.div 
                   key={key}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + categoryIndex * 0.1 }}
+                  transition={{ delay: 0.1 + categoryIndex * 0.05 }}
+                  className="border border-border/50 rounded-lg overflow-hidden"
                 >
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    {label}
-                  </h3>
-                  <div className="space-y-1">
-                    {categoryTools.map((tool, toolIndex) => {
-                      const Icon = tool.icon;
-                      const isActive = location === `/tool/${tool.id}` || (location === '/' && tool.id === 'smart-paste');
-                      
-                      return (
-                        <motion.div
-                          key={tool.id}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.3 + categoryIndex * 0.1 + toolIndex * 0.05 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Link href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
-                                <Button
-                                  variant={isActive ? 'default' : 'ghost'}
-                                  className={`w-full justify-start smooth-transition ${
-                                    isActive 
-                                      ? 'gradient-primary text-white shadow-lg' 
-                                      : 'text-foreground hover:bg-green-500/20 hover:text-green-700 dark:hover:text-green-400'
-                                  }`}
-                                  onClick={() => setIsOpen(false)}
-                                >
-                                  <motion.div
-                                    className="flex items-center justify-center"
-                                  >
-                                    <Icon className={`w-4 h-4 mr-2 icon-bounce ${
-                                      isActive ? 'text-white' : categoryColors[key as keyof typeof categoryColors]
-                                    }`} />
-                                  </motion.div>
-                                  <span className={isActive ? 'font-semibold' : ''}>{tool.name}</span>
-                                </Button>
-                              </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="notification-pop">
-                              <p className="font-medium">{tool.name}</p>
-                              <p className="text-xs text-muted-foreground">Click to use this tool</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
+                  <Collapsible
+                    open={isExpanded}
+                    onOpenChange={() => toggleCategory(key)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-between p-3 hover:bg-accent/50"
+                      >
+                        <div className="flex items-center">
+                          <CategoryIcon className={`w-4 h-4 mr-2 ${categoryColors[key as keyof typeof categoryColors]}`} />
+                          <span className="text-sm font-medium">{category.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                            {search ? `${categoryTools.length}/${toolCount}` : toolCount}
+                          </span>
+                          {isExpanded ? (
+                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                          )}
+                        </div>
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="px-2 pb-2 space-y-1">
+                        {categoryTools.map((tool, toolIndex) => {
+                          const Icon = tool.icon;
+                          const isActive = location === `/tool/${tool.id}` || (location === '/' && tool.id === 'smart-paste');
+                          
+                          return (
+                            <motion.div
+                              key={tool.id}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.05 + toolIndex * 0.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Link href={tool.id === 'smart-paste' ? '/' : `/tool/${tool.id}`}>
+                                    <Button
+                                      variant={isActive ? 'default' : 'ghost'}
+                                      size="sm"
+                                      className={`w-full justify-start smooth-transition ${
+                                        isActive 
+                                          ? 'gradient-primary text-white shadow-sm' 
+                                          : 'text-foreground hover:bg-green-500/20 hover:text-green-700 dark:hover:text-green-400'
+                                      }`}
+                                      onClick={() => setIsOpen(false)}
+                                    >
+                                      <Icon className={`w-3.5 h-3.5 mr-2 ${
+                                        isActive ? 'text-white' : categoryColors[key as keyof typeof categoryColors]
+                                      }`} />
+                                      <span className={`text-sm ${isActive ? 'font-medium' : ''}`}>{tool.name}</span>
+                                    </Button>
+                                  </Link>
+                                </TooltipTrigger>
+                                <TooltipContent side="right" className="notification-pop">
+                                  <p className="font-medium">{tool.name}</p>
+                                  <p className="text-xs text-muted-foreground">Click to use this tool</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </motion.div>
               );
             })}
