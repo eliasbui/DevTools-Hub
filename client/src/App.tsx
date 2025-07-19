@@ -10,8 +10,6 @@ import { Pricing } from "@/pages/Pricing";
 import { Settings } from "@/pages/Settings";
 import { Favorites } from "@/pages/Favorites";
 import NotFound from "@/pages/not-found";
-import Landing from "@/pages/Landing";
-import Marketing from "@/pages/Marketing";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import ForgotPassword from "@/pages/ForgotPassword";
@@ -48,7 +46,7 @@ function Router() {
 function App() {
   const AppContent = () => {
     const { isAuthenticated } = useAuth();
-    
+
     return (
       <>
         <Router />
