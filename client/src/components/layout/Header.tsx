@@ -12,7 +12,7 @@ export function Header({ title, description, onMenuClick }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="bg-card border-b border-border px-6 py-4">
+    <header className="sticky top-0 z-50 bg-card border-b border-border px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-card/95">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button
