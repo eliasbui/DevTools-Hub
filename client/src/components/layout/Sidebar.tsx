@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown } from 'lucide-react';
+import { tools, categories, categoryColors } from '@/lib/toolsData';
 import { 
   Wand2, 
   Code, 
@@ -46,84 +47,7 @@ import {
   Star
 } from 'lucide-react';
 
-const tools = [
-  { id: 'smart-paste', name: 'Smart Paste', icon: Wand2, category: 'featured' },
-  { id: 'data-visualization', name: 'Data Visualization', icon: Network, category: 'featured' },
-  { id: 'json-formatter', name: 'JSON Formatter', icon: Code, category: 'converters' },
-  { id: 'base64-tool', name: 'Base64 Encoder', icon: Key, category: 'converters' },
-  { id: 'url-encoder', name: 'URL Encoder', icon: LinkIcon, category: 'converters' },
-  { id: 'timestamp-converter', name: 'Timestamp Converter', icon: Clock, category: 'converters' },
-  { id: 'regex-tester', name: 'Regex Tester', icon: Search, category: 'validation' },
-  { id: 'text-diff', name: 'Text Diff Checker', icon: GitCompare, category: 'validation' },
-  { id: 'jwt-debugger', name: 'JWT Debugger', icon: Shield, category: 'validation' },
-  { id: 'uuid-generator', name: 'UUID Generator', icon: Fingerprint, category: 'generators' },
-  { id: 'hash-generator', name: 'Hash Generator', icon: Hash, category: 'generators' },
-  { id: 'lorem-generator', name: 'Lorem Ipsum', icon: Type, category: 'generators' },
-  { id: 'password-generator', name: 'Password Generator', icon: Shield, category: 'generators' },
-  { id: 'http-client', name: 'HTTP Client', icon: Send, category: 'network' },
-  { id: 'css-grid-generator', name: 'CSS Grid Generator', icon: Grid, category: 'design' },
-  { id: 'color-palette', name: 'Color Palette', icon: Palette, category: 'design' },
-  { id: 'color-converter', name: 'Color Converter', icon: Palette, category: 'design' },
-  { id: 'box-shadow-generator', name: 'Box Shadow', icon: Eye, category: 'design' },
-  { id: 'text-case-converter', name: 'Text Case', icon: Type, category: 'text' },
-  { id: 'qr-code-generator', name: 'QR Code', icon: QrCode, category: 'generators' },
-  { id: 'csv-converter', name: 'CSV Converter', icon: FileText, category: 'converters' },
-  { id: 'markdown-converter', name: 'Markdown Converter', icon: FileText, category: 'converters' },
-  { id: 'yaml-converter', name: 'YAML Converter', icon: FileText, category: 'converters' },
-  { id: 'sql-formatter', name: 'SQL Formatter', icon: Database, category: 'database' },
-  { id: 'xml-formatter', name: 'XML Formatter', icon: FileCode, category: 'converters' },
-  { id: 'password-strength', name: 'Password Strength', icon: Shield, category: 'security' },
-  { id: 'unit-converter', name: 'Unit Converter', icon: Calculator, category: 'converters' },
-  { id: 'text-statistics', name: 'Text Statistics', icon: BarChart, category: 'text' },
-  { id: 'text-encoder', name: 'Text Encoder', icon: FileCode2, category: 'text' },
-  { id: 'text-replacer', name: 'Text Replacer', icon: Replace, category: 'text' },
-  { id: 'line-tools', name: 'Line Tools', icon: List, category: 'text' },
-  { id: 'text-splitter', name: 'Text Splitter', icon: Scissors, category: 'text' },
-  { id: 'character-counter', name: 'Character Counter', icon: Calculator, category: 'text' },
-  { id: 'markdown-to-html', name: 'Markdown to HTML', icon: FileText, category: 'text' },
-  { id: 'database-schema-visualizer', name: 'Schema Visualizer', icon: Database, category: 'database' },
-  { id: 'sql-query-builder', name: 'Query Builder', icon: Table, category: 'database' },
-  { id: 'connection-string-builder', name: 'Connection String', icon: LinkIcon, category: 'database' },
-  { id: 'mock-data-generator', name: 'Mock Data', icon: Database, category: 'database' },
-  { id: 'ssl-certificate-analyzer', name: 'SSL Certificate', icon: Shield, category: 'security' },
-  { id: 'encryption-tools', name: 'Encryption', icon: Lock, category: 'security' }, 
-  { id: 'hmac-generator', name: 'HMAC Generator', icon: Key, category: 'security' },
-  { id: 'certificate-decoder', name: 'Certificate Decoder', icon: FileKey, category: 'security' },
-  { id: 'file-checksum-calculator', name: 'File Checksum', icon: Hash, category: 'file' },
-  { id: 'file-sum-calculator', name: 'File Analyzer', icon: BarChart, category: 'file' },
-  { id: 'secure-zip-viewer', name: 'ZIP Viewer', icon: Archive, category: 'file' },
-  { id: 'image-converter', name: 'Image Converter', icon: FileImage, category: 'file' },
-  { id: 'code-minifier', name: 'Code Minifier', icon: FileCode, category: 'converters' },
-  { id: 'svg-optimizer', name: 'SVG Optimizer', icon: FileImage, category: 'file' },
-  { id: 'cron-expression-builder', name: 'Cron Builder', icon: Clock, category: 'generators' },
-];
-
-const categories = {
-  featured: 'Featured',
-  converters: 'Data Converters',
-  validation: 'Validation & Debug',
-  generators: 'Generators',
-  network: 'API & Network',
-  design: 'CSS & Design',
-  text: 'Text Processing',
-  database: 'Database Tools',
-  security: 'Security & Encryption',
-  file: 'File Tools'
-};
-
-// Color scheme for categories
-const categoryColors = {
-  featured: 'text-purple-500 dark:text-purple-400',
-  converters: 'text-blue-500 dark:text-blue-400',
-  validation: 'text-green-500 dark:text-green-400',
-  generators: 'text-pink-500 dark:text-pink-400',
-  network: 'text-orange-500 dark:text-orange-400',
-  design: 'text-indigo-500 dark:text-indigo-400',
-  text: 'text-teal-500 dark:text-teal-400',
-  database: 'text-yellow-500 dark:text-yellow-400',
-  security: 'text-red-500 dark:text-red-400',
-  file: 'text-cyan-500 dark:text-cyan-400'
-};
+// Tools, categories, and categoryColors are now imported from @/lib/toolsData
 
 interface SidebarProps {
   isOpen: boolean;

@@ -9,14 +9,21 @@ interface FavoriteData {
   toolId: string;
 }
 
+interface Favorite {
+  id: number;
+  userId: string;
+  toolId: string;
+  createdAt: string;
+}
+
 export function useFavorites() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Get user's favorites
-  const { data: favorites = [], isLoading } = useQuery({
-    queryKey: ['/api/favorites', user?.id],
+  const { data: favorites = [], isLoading } = useQuery<Favorite[]>({
+    queryKey: ['/api/favorites', user?.id || user?.claims?.sub],
     enabled: !!user,
   });
 
@@ -26,7 +33,7 @@ export function useFavorites() {
       if (!user) throw new Error('Not authenticated');
       
       const data: FavoriteData = {
-        userId: user.id,
+        userId: (user as any).id || (user as any).claims?.sub,
         toolId
       };
       
@@ -73,7 +80,7 @@ export function useFavorites() {
 
   // Toggle favorite
   const toggleFavorite = async (toolId: string) => {
-    const isFavorite = favorites.some((fav: any) => fav.toolId === toolId);
+    const isFavorite = favorites.some((fav) => fav.toolId === toolId);
     
     if (isFavorite) {
       await removeFavorite.mutateAsync(toolId);
@@ -84,7 +91,7 @@ export function useFavorites() {
 
   // Check if tool is favorited
   const isFavorite = (toolId: string) => {
-    return favorites.some((fav: any) => fav.toolId === toolId);
+    return favorites.some((fav) => fav.toolId === toolId);
   };
 
   return {

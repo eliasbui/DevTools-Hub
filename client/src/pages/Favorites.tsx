@@ -4,63 +4,29 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
-import { Star, ArrowRight, Sparkles, Code, Key, Link as LinkIcon, Clock, Search, GitCompare, Shield, Fingerprint, Hash, Type, Send, Grid, Palette, Table, Archive, BarChart, FileImage, FileCode, Lock, FileKey, Database } from 'lucide-react';
+import { Star, ArrowRight, Sparkles, Code } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Link } from 'wouter';
-// Tool categories for favorites display
-const categories = {
-  featured: 'Featured',
-  converters: 'Data Converters',
-  validation: 'Validators',
-  generators: 'Generators',
-  network: 'API & Network',
-  design: 'CSS & Design',
-  text: 'Text Processing',
-  database: 'Database Tools',
-  security: 'Security Tools',
-  file: 'File Tools'
-};
+import { getToolById, categories } from '@/lib/toolsData';
 
 export function Favorites() {
   const { favorites, isLoading } = useFavorites();
 
   // Get tool details from favorites  
   const favoriteTools = favorites.map((fav: any) => {
-    // Map of tool IDs to their details
-    const toolsData: Record<string, { name: string; description: string; category: string; icon: any }> = {
-      'json-formatter': { name: 'JSON Formatter', description: 'Format, validate, and minify JSON data', category: 'converters', icon: Code },
-      'base64-tool': { name: 'Base64 Encoder/Decoder', description: 'Encode and decode Base64 strings', category: 'converters', icon: Key },
-      'url-encoder': { name: 'URL Encoder/Decoder', description: 'Encode and decode URLs', category: 'converters', icon: LinkIcon },
-      'timestamp-converter': { name: 'Timestamp Converter', description: 'Convert Unix timestamps to dates', category: 'converters', icon: Clock },
-      'regex-tester': { name: 'Regex Tester', description: 'Test regular expressions', category: 'validation', icon: Search },
-      'text-diff': { name: 'Text Diff Checker', description: 'Compare two texts', category: 'validation', icon: GitCompare },
-      'jwt-debugger': { name: 'JWT Debugger', description: 'Parse and analyze JWT tokens', category: 'validation', icon: Shield },
-      'uuid-generator': { name: 'UUID Generator', description: 'Generate unique identifiers', category: 'generators', icon: Fingerprint },
-      'hash-generator': { name: 'Hash Generator', description: 'Generate various hashes', category: 'generators', icon: Hash },
-      'lorem-generator': { name: 'Lorem Ipsum Generator', description: 'Generate placeholder text', category: 'generators', icon: Type },
-      'password-generator': { name: 'Password Generator', description: 'Generate secure passwords', category: 'generators', icon: Shield },
-      'http-client': { name: 'HTTP Client', description: 'Make API requests', category: 'network', icon: Send },
-      'css-grid-generator': { name: 'CSS Grid Generator', description: 'Generate CSS Grid layouts', category: 'design', icon: Grid },
-      'color-palette': { name: 'Color Palette Generator', description: 'Generate color schemes', category: 'design', icon: Palette },
-      'box-shadow-generator': { name: 'Box Shadow Generator', description: 'Create CSS box shadows', category: 'design', icon: Grid },
-      'text-case-converter': { name: 'Text Case Converter', description: 'Convert text cases', category: 'text', icon: Type },
-      'qr-code-generator': { name: 'QR Code Generator', description: 'Generate QR codes', category: 'generators', icon: Code },
-      'csv-converter': { name: 'CSV Converter', description: 'Convert CSV data', category: 'converters', icon: Table },
-      'markdown-converter': { name: 'Markdown Converter', description: 'Convert Markdown to HTML', category: 'converters', icon: Code },
-    };
+    const tool = getToolById(fav.toolId);
     
-    const tool = toolsData[fav.toolId];
     if (tool) {
       return {
-        id: fav.toolId,
+        id: tool.id,
         name: tool.name,
         description: tool.description,
-        categoryName: categories[tool.category] || tool.category,
+        categoryName: categories[tool.category as keyof typeof categories] || tool.category,
         icon: tool.icon
       };
     }
     
-    // Default icon for tools not in the list
+    // Default for tools not found
     return {
       id: fav.toolId,
       name: fav.toolId,
@@ -86,7 +52,7 @@ export function Favorites() {
   };
 
   return (
-    <Layout>
+    <Layout title="Favorites">
       <div className="container mx-auto p-6 max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
