@@ -56,7 +56,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { isUnauthorizedError } from '@/lib/authUtils';
-import { FavoriteButton } from '@/components/FavoriteButton';
 
 const tools = {
   'json-formatter': {
@@ -373,13 +372,8 @@ export function Tool() {
   const ToolComponent = tool.component;
 
   return (
-    <Layout title={tool.name} description={tool.description}>
-      <div className="relative">
-        <div className="absolute top-4 right-4 z-10">
-          <FavoriteButton toolId={toolId} showLabel />
-        </div>
-        <ToolComponent toolId={toolId} toolName={tool.name} />
-      </div>
+    <Layout title={tool.name} description={tool.description} toolId={toolId}>
+      <ToolComponent toolId={toolId} toolName={tool.name} />
     </Layout>
   );
 }

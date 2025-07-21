@@ -6,9 +6,10 @@ interface LayoutProps {
   children: React.ReactNode;
   title: string;
   description?: string;
+  toolId?: string;
 }
 
-export function Layout({ children, title, description }: LayoutProps) {
+export function Layout({ children, title, description, toolId }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -20,6 +21,7 @@ export function Layout({ children, title, description }: LayoutProps) {
           title={title}
           description={description}
           onMenuClick={() => setSidebarOpen(true)}
+          toolId={toolId}
         />
         
         <main className="p-6">

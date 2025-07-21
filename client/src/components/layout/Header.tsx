@@ -1,14 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
+import { FavoriteButton } from '@/components/FavoriteButton';
 import { Moon, Sun, Menu } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
   description?: string;
   onMenuClick: () => void;
+  toolId?: string;
 }
 
-export function Header({ title, description, onMenuClick }: HeaderProps) {
+export function Header({ title, description, onMenuClick, toolId }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -31,7 +33,10 @@ export function Header({ title, description, onMenuClick }: HeaderProps) {
           </div>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
+          {toolId && (
+            <FavoriteButton toolId={toolId} showLabel={false} />
+          )}
           <Button
             variant="ghost"
             size="sm"
