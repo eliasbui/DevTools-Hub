@@ -30,10 +30,7 @@ export function useFavorites() {
         toolId
       };
       
-      return apiRequest('/api/favorites', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('POST', '/api/favorites', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/favorites'] });
@@ -56,9 +53,7 @@ export function useFavorites() {
     mutationFn: async (toolId: string) => {
       if (!user) throw new Error('Not authenticated');
       
-      return apiRequest(`/api/favorites/${toolId}`, {
-        method: 'DELETE',
-      });
+      return apiRequest('DELETE', `/api/favorites/${toolId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/favorites'] });
